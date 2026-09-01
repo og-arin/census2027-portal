@@ -66,9 +66,9 @@ export const translations = {
     tableColStatus: "Status",
 
     // Chat Flow / Self-Enumeration
-    chatTitle: "Census Mitra AI",
-    chatSubtitle: "Your personal, secure assistant for Census 2027 self-enumeration",
-    chatBadgeAI: "AI Assistant (Census Mitra)",
+    chatTitle: "Asha AI",
+    chatSubtitle: "Your personal, secure assistant for Census 2027 self-enumeration — powered by Asha AI",
+    chatBadgeAI: "AI Assistant (Asha)",
     chatPhase1Tab: "Phase 1: House Listing",
     chatPhase2Tab: "Phase 2: Population Enumeration",
     chatInputPlaceholder: "Type your response or select quick options below...",
@@ -89,7 +89,7 @@ export const translations = {
     // Preview Drawer
     previewTitle: "Live Data Review",
     previewSubtitle: "Your entered census responses are stored in encrypted format under /enumerations/{userId}",
-    previewEmpty: "No responses recorded yet. Chat with Census Mitra to begin.",
+    previewEmpty: "No responses recorded yet. Chat with Asha to begin.",
     previewEditNotice: "You can click any response in chat or re-answer to update your data before final submission.",
     previewSubmitFinal: "Verify & Generate Official Census Slip",
 
@@ -107,11 +107,17 @@ export const translations = {
     // Dashboard
     dashTitle: "Census 2027 Analytics & Demographics",
     dashSubtitle: "Explore real-time aggregated insights, demographic distributions, and national progress statistics.",
+    dashboardTitle: "Census 2027 Analytics",
+    dashboardSubtitle: "Real-time aggregated insights and national demographic statistics.",
     kpiTotalPop: "Estimated Population",
     kpiTotalHouseholds: "Households Surveyed",
     kpiLiteracyRate: "National Literacy Rate",
     kpiDigitalShare: "Digital Self-Enumeration %",
     kpiGrowth: "+12.4% vs 2011 Census",
+    chartPopulationTitle: "Population by State",
+    chartAgePyramidTitle: "Age-Sex Pyramid",
+    chartLiteracyTitle: "Literacy by Gender",
+    chartAmenitiesTitle: "Household Amenities",
     chartPopState: "Projected Population by Major States (Millions)",
     chartAgePyramid: "National Age-Sex Demographic Pyramid",
     chartLiteracy: "Literacy Rate by Gender across Selected States (%)",
@@ -124,8 +130,15 @@ export const translations = {
     zoneAll: "All India",
 
     // Privacy & Myths
+    privacyTitle: "Privacy & Data Protection",
+    privacySubtitle: "Learn about the legal safeguards protecting your census data and get facts countering rumors.",
     privacyHeading: "Privacy, Data Protection & Myth Busters",
     privacySubheading: "Learn about the rock-solid legal safeguards protecting your census data, and get facts countering online rumors.",
+    mythFactHeading: "Myths vs. Official Facts",
+    mythFactSubheading: "Clarifying circulating rumors and common misconceptions about Census 2027.",
+    misinfoFeedHeading: "Live Fact-Check & Misinformation Feed",
+    misinfoFeedSubheading: "Verified debunks of viral social media claims regarding Census 2027.",
+    reportClaimBtn: "Report Suspicious Claim",
     dpdpBadge: "DPDP Act 2023 Compliant",
     dpdpTitle: "Guaranteed Confidentiality under Census Act, 1948",
     dpdpDesc: "By law, Census data is strictly confidential. It CANNOT be shared with tax authorities, police, courts, or private commercial companies. It is solely used for statistical planning and public welfare allocation.",
@@ -158,11 +171,33 @@ export const translations = {
     reportSuccess: "Claim submitted successfully. Our fact-checking team will review it.",
 
     // Footer
-    footerDisclaimer: "This portal is a demonstration application built for Hackathon demonstration purposes. Design and structure based on Census of India digital framework.",
+    footerDisclaimer: "This portal is a demonstration application built for Hackathon demonstration purposes.",
     footerRights: "© 2027 Census of India • Office of the Registrar General & Census Commissioner",
     footerPrivacyLink: "Privacy Policy",
     footerTermsLink: "Terms of Service",
-    footerHelpdesk: "National Helpline: 1800-11-2027 (Toll Free)"
+    footerHelpdesk: "National Helpline: 1800-11-2027 (Toll Free)",
+
+    // Auth Modal
+    loginHeading: "Citizen Sign In",
+    loginSubheading: "Sign in to save your census data securely",
+    registerHeading: "Create Account",
+    emailLabel: "Email Address",
+    passwordLabel: "Password",
+    loginBtn: "Sign In",
+    registerBtn: "Create Account",
+    demoLoginBtn: "Demo Citizen Login",
+    alreadyHaveAccount: "Already have an account?",
+    noAccount: "Don't have an account?",
+    loginLink: "Sign In",
+    registerLink: "Register",
+
+    // Slip
+    slipPrintBtn: "Print",
+    slipCloseBtn: "Close",
+    slipDept: "Office of the Registrar General & Census Commissioner of India",
+    slipUrnLabel: "Unique Reference Number (URN)",
+    slipCertifyText: "This is to certify that the above-mentioned citizen has successfully completed the digital self-enumeration process for Census of India 2027.",
+    slipConfidentiality: "STRICTLY CONFIDENTIAL — Protected under Section 15 of the Census Act, 1948 and DPDP Act, 2023. Not admissible as evidence in any court.",
   },
 
   hi: {
@@ -232,9 +267,9 @@ export const translations = {
     tableColStatus: "स्थिति",
 
     // Chat Flow / Self-Enumeration
-    chatTitle: "जनगणना मित्र एआई",
-    chatSubtitle: "जनगणना 2027 स्व-गणना के लिए आपका व्यक्तिगत, सुरक्षित सहायक",
-    chatBadgeAI: "एआई सहायक (जनगणना मित्र)",
+    chatTitle: "आशा AI",
+    chatSubtitle: "जनगणना 2027 स्व-गणना के लिए आपका व्यक्तिगत, सुरक्षित सहायक — आशा AI द्वारा संचालित",
+    chatBadgeAI: "एआई सहायक (आशा)",
     chatPhase1Tab: "चरण 1: मकान सूचीकरण",
     chatPhase2Tab: "चरण 2: जनसंख्या गणना",
     chatInputPlaceholder: "अपना उत्तर टाइप करें या नीचे दिए गए विकल्पों में से चुनें...",
@@ -255,7 +290,7 @@ export const translations = {
     // Preview Drawer
     previewTitle: "दर्ज डेटा समीक्षा",
     previewSubtitle: "आपके द्वारा दी गई जानकारी /enumerations/{userId} में एन्क्रिप्टेड प्रारूप में सुरक्षित है",
-    previewEmpty: "अभी तक कोई जानकारी दर्ज नहीं की गई है। प्रारंभ करने के लिए जनगणना मित्र से बात करें।",
+    previewEmpty: "अभी तक कोई जानकारी दर्ज नहीं की गई है। प्रारंभ करने के लिए आशा से बात करें।",
     previewEditNotice: "अंतिम सबमिशन से पहले आप चैट में उत्तर पर क्लिक करके या फिर से उत्तर देकर विवरण बदल सकते हैं।",
     previewSubmitFinal: "सत्यापित करें और आधिकारिक जनगणना रसीद बनाएं",
 
@@ -273,11 +308,17 @@ export const translations = {
     // Dashboard
     dashTitle: "जनगणना 2027 जनसांख्यिकी व आंकड़े",
     dashSubtitle: "राष्ट्रीय स्तर पर संकलित अंतर्दृष्टि, जनसंख्या वितरण और डिजिटल भागीदारी की वास्तविक स्थिति देखें।",
+    dashboardTitle: "जनगणना 2027 विश्लेषण",
+    dashboardSubtitle: "राष्ट्रीय जनसांख्यिकीय आंकड़े और वास्तविक समय की जानकारी।",
     kpiTotalPop: "अनुमानित कुल जनसंख्या",
     kpiTotalHouseholds: "सर्वेक्षित परिवार",
     kpiLiteracyRate: "राष्ट्रीय साक्षरता दर",
     kpiDigitalShare: "डिजिटल स्व-गणना प्रतिशत",
     kpiGrowth: "+12.4% (2011 की तुलना में)",
+    chartPopulationTitle: "राज्यवार जनसंख्या",
+    chartAgePyramidTitle: "आयु-लिंग पिरामिड",
+    chartLiteracyTitle: "लैंगिक साक्षरता",
+    chartAmenitiesTitle: "घरेलू सुविधाएं",
     chartPopState: "प्रमुख राज्यों की अनुमानित जनसंख्या (मिलियन में)",
     chartAgePyramid: "राष्ट्रीय आयु-लिंग जनसांख्यिकी पिरामिड",
     chartLiteracy: "चयनित राज्यों में लैंगिक साक्षरता दर (%)",
@@ -290,8 +331,15 @@ export const translations = {
     zoneAll: "अखिल भारतीय",
 
     // Privacy & Myths
+    privacyTitle: "गोपनीयता एवं डेटा सुरक्षा",
+    privacySubtitle: "जानिए कौन से कानूनी प्रावधान आपके जनगणना डेटा की रक्षा करते हैं।",
     privacyHeading: "डेटा गोपनीयता, सुरक्षा और भ्रांतियों का निवारण",
     privacySubheading: "जानिए कौन से कड़े कानूनी प्रावधान आपके जनगणना डेटा की रक्षा करते हैं, और सोशल मीडिया की अफवाहों की सच्चाई।",
+    mythFactHeading: "भ्रांतियां बनाम आधिकारिक तथ्य",
+    mythFactSubheading: "जनगणना 2027 को लेकर फैलाई जा रही अफवाहों का आधिकारिक स्पष्टीकरण।",
+    misinfoFeedHeading: "लाइव फैक्ट-चेक एवं भ्रामक सूचना निवारण",
+    misinfoFeedSubheading: "जनगणना 2027 के संबंध में सोशल मीडिया पर वायरल दावों की आधिकारिक पड़ताल।",
+    reportClaimBtn: "संदिग्ध संदेश रिपोर्ट करें",
     dpdpBadge: "DPDP अधिनियम 2023 के अनुरूप",
     dpdpTitle: "जनगणना अधिनियम, 1948 के तहत पूर्ण गोपनीयता की गारंटी",
     dpdpDesc: "कानूनन जनगणना डेटा पूर्णतः गोपनीय होता है। इसे आयकर विभाग, पुलिस, न्यायालय या किसी भी निजी व्यावसायिक कंपनी के साथ साझा नहीं किया जा सकता। इसका उपयोग केवल राष्ट्रीय योजना और लोक कल्याण के लिए होता है।",
@@ -324,10 +372,32 @@ export const translations = {
     reportSuccess: "रिपोर्ट सफलतापूर्वक दर्ज की गई। हमारी टीम इसकी जांच करेगी।",
 
     // Footer
-    footerDisclaimer: "यह पोर्टल हैकथॉन प्रदर्शन के लिए बनाया गया एक डेमो एप्लिकेशन है। डिज़ाइन भारत की डिजिटल जनगणना रूपरेखा पर आधारित है।",
+    footerDisclaimer: "यह पोर्टल हैकथॉन प्रदर्शन के लिए बनाया गया एक डेमो एप्लिकेशन है।",
     footerRights: "© 2027 भारत की जनगणना • महारजिस्ट्रार एवं जनगणना आयुक्त कार्यालय",
     footerPrivacyLink: "गोपनीयता नीति",
     footerTermsLink: "उपयोग की शर्तें",
-    footerHelpdesk: "राष्ट्रीय हेल्पलाइन: 1800-11-2027 (टोल-फ्री)"
+    footerHelpdesk: "राष्ट्रीय हेल्पलाइन: 1800-11-2027 (टोल-फ्री)",
+
+    // Auth Modal
+    loginHeading: "नागरिक लॉगिन",
+    loginSubheading: "अपना जनगणना डेटा सुरक्षित सहेजने के लिए साइन इन करें",
+    registerHeading: "खाता बनाएं",
+    emailLabel: "ईमेल पता",
+    passwordLabel: "पासवर्ड",
+    loginBtn: "साइन इन",
+    registerBtn: "खाता बनाएं",
+    demoLoginBtn: "डेमो नागरिक लॉगिन",
+    alreadyHaveAccount: "पहले से खाता है?",
+    noAccount: "खाता नहीं है?",
+    loginLink: "साइन इन करें",
+    registerLink: "रजिस्टर करें",
+
+    // Slip
+    slipPrintBtn: "प्रिंट करें",
+    slipCloseBtn: "बंद करें",
+    slipDept: "महारजिस्ट्रार एवं जनगणना आयुक्त का कार्यालय, भारत",
+    slipUrnLabel: "विशिष्ट संदर्भ संख्या (URN)",
+    slipCertifyText: "यह प्रमाणित किया जाता है कि उपरोक्त नागरिक ने जनगणना 2027 की डिजिटल स्व-गणना प्रक्रिया सफलतापूर्वक पूर्ण की है।",
+    slipConfidentiality: "पूर्णतः गोपनीय — जनगणना अधिनियम, 1948 की धारा 15 एवं DPDP अधिनियम, 2023 के तहत संरक्षित। किसी भी न्यायालय में साक्ष्य के रूप में अस्वीकार्य।",
   }
 };

@@ -1,8 +1,8 @@
 import { phase1Questions, phase2Questions } from '../data/formSchema';
 import { sanitizeForGemini } from '../utils/sanitize';
 
-export const CENSUS_MITRA_SYSTEM_PROMPT = `
-You are "Census Mitra" (जनगणना मित्र), the official, highly respectful, and helpful AI Enumeration Assistant for the Census of India 2027.
+export const ASHA_SYSTEM_PROMPT = `
+You are "Asha" (आशा), the official, highly respectful, and helpful AI Enumeration Assistant for the Census of India 2027.
 Your mission is to guide Indian citizens step-by-step through their digital self-enumeration for:
 1. Phase 1: House Listing and Housing Census (building material, amenities, drinking water, cooking fuel, lighting, toilet, digital assets).
 2. Phase 2: Population Enumeration (head of household, member count, age, gender, marital status, education, mother tongue, occupation, migration).
@@ -16,6 +16,9 @@ Rules of Interaction:
 <!--EXTRACT:{"field":"<field_id>","value":"<extracted_value>","phase":"<phase1|phase2>"}-->
 6. Keep answers concise, clear, and reassuring.
 `.trim();
+
+// Backward compat alias
+export const CENSUS_MITRA_SYSTEM_PROMPT = ASHA_SYSTEM_PROMPT;
 
 const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY || "";
 const CLOUD_FUNCTION_URL = import.meta.env.VITE_FIREBASE_FUNCTION_URL || "";
@@ -108,11 +111,11 @@ export async function sendCensusMessageToGemini({
         }
       }
     } catch (err) {
-      console.warn("Gemini API call warning, falling back to local Census Mitra engine:", err);
+      console.warn("Gemini API call warning, falling back to local Asha engine:", err);
     }
   }
 
-  // 3. Smart Local Census Mitra Engine (Robust fallback)
+  // 3. Smart Local Asha Engine (Robust fallback)
   return generateLocalCensusMitraResponse({
     messages: sanitizedMessages,
     currentQuestionIndex,
