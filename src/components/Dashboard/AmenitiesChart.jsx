@@ -23,7 +23,7 @@ export default function AmenitiesChart() {
               cx="50%" cy="50%"
               innerRadius={55} outerRadius={95}
               paddingAngle={3}
-              dataKey="value"
+              dataKey="coverage"
               nameKey={language === 'hi' ? 'name_hi' : 'name'}
               stroke="#fff"
               strokeWidth={2}

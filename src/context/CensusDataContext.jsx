@@ -1,3 +1,4 @@
+import { populationByStateData, agePyramidData, literacyData, householdAmenitiesData, kpiSummary } from '../data/dummyDashboardData';
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useAuth } from './AuthContext';
 import { saveEnumerationData, getEnumerationData } from '../services/firestoreService';
@@ -7,7 +8,7 @@ const CensusDataContext = createContext();
 
 export function CensusDataProvider({ children }) {
   const { currentUser } = useAuth();
-  
+
   const [phase1Data, setPhase1Data] = useState({});
   const [phase2Data, setPhase2Data] = useState({});
   const [currentPhase, setCurrentPhase] = useState('phase1');
@@ -16,6 +17,14 @@ export function CensusDataProvider({ children }) {
   const [completedAt, setCompletedAt] = useState(null);
   const [isSaving, setIsSaving] = useState(false);
   const [lastSaved, setLastSaved] = useState(null);
+
+  const censusData = {
+    population: populationByStateData,
+    agePyramid: agePyramidData,
+    literacy: literacyData,
+    amenities: householdAmenitiesData,
+    kpi: kpiSummary
+  };
 
   // Load existing data when user changes
   useEffect(() => {
@@ -154,6 +163,7 @@ export function CensusDataProvider({ children }) {
       completedAt,
       isSaving,
       lastSaved,
+      censusData,
       updateAnswer,
       completePhase1,
       completeFinalEnumeration,
