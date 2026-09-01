@@ -72,14 +72,14 @@ export async function sendCensusMessageToGemini({
   if (GEMINI_API_KEY && GEMINI_API_KEY !== "your-gemini-api-key") {
     try {
       const systemInstruction = `${CENSUS_MITRA_SYSTEM_PROMPT}\n\nCurrent Form State: ${JSON.stringify(formData)}\nActive Phase: ${phase}\nUser Preferred Language: ${language === 'hi' ? 'Hindi' : 'English'}`;
-      
+
       const contents = sanitizedMessages.map(msg => ({
         role: msg.sender === 'user' ? 'user' : 'model',
         parts: [{ text: msg.text }]
       }));
 
       const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`,
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -150,9 +150,9 @@ export function generateLocalCensusMitraResponse({
 
   const ackEn = ["Got it, recorded!", "Thank you for providing that detail.", "Perfect, noted securely.", "Understood."];
   const ackHi = ["धन्यवाद, यह विवरण दर्ज कर लिया गया है।", "बहुत अच्छा, यह जानकारी सुरक्षित रूप से सहेजी गई है।", "नोट कर लिया गया है।", "ठीक है, अगला विवरण दर्ज करते हैं।"];
-  
-  const randomAck = language === 'hi' 
-    ? ackHi[Math.floor(Math.random() * ackHi.length)] 
+
+  const randomAck = language === 'hi'
+    ? ackHi[Math.floor(Math.random() * ackHi.length)]
     : ackEn[Math.floor(Math.random() * ackEn.length)];
 
   let nextIndex = currentQuestionIndex;
