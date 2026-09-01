@@ -3,96 +3,55 @@
 @tailwind utilities;
 
 @layer base {
-  :root {
-    --color-formal-navy: 7 14 24;
-    --color-formal-saffron: 217 119 6;
-    --color-formal-emerald: 4 120 87;
-  }
-
   body {
-    @apply bg-[#070e18] text-slate-200 font-sans selection:bg-amber-600 selection:text-white;
-    background-image: 
-      radial-gradient(circle at 50% 0%, rgba(217, 119, 6, 0.05) 0%, transparent 60%),
-      linear-gradient(to right, rgba(255, 255, 255, 0.015) 1px, transparent 1px),
-      linear-gradient(to bottom, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
-    background-size: 100% 100%, 48px 48px, 48px 48px;
+    @apply bg-white text-gray-800 font-body antialiased;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
 
-  h1, h2, h3, .font-heading {
-    @apply font-serif tracking-tight text-white;
+  h1, h2, h3, h4, .font-heading {
+    @apply font-sans font-bold text-gray-900;
   }
 
-  /* Formal Gazette Rules */
-  hr.gazette-rule {
-    border: 0;
-    height: 3px;
-    background: linear-gradient(to right, #d97706, #cbd5e1, #047857);
-    margin: 1.5rem 0;
-  }
-
-  /* Accessibility focus visible outline */
   :focus-visible {
-    @apply outline-none ring-2 ring-amber-500 ring-offset-2 ring-offset-[#070e18];
+    @apply outline-none ring-2 ring-gov-blue-500 ring-offset-2 ring-offset-white;
   }
 
-  /* Custom scrollbar */
-  ::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
-  }
-  ::-webkit-scrollbar-track {
-    background: #070e18;
-  }
-  ::-webkit-scrollbar-thumb {
-    background: #1e293b;
-    border-radius: 2px;
-  }
-  ::-webkit-scrollbar-thumb:hover {
-    background: #334155;
-  }
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: #f1f5f9; }
+  ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+  ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 }
 
 @layer utilities {
-  .document-panel {
-    background: #0c1829;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.5);
+  .gov-card {
+    @apply bg-white border border-gray-200 shadow-gov;
   }
-
-  .document-panel-hover {
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  .gov-card-hover {
+    @apply transition-all duration-200;
   }
-  .document-panel-hover:hover {
-    background: #102138;
-    border-color: rgba(217, 119, 6, 0.35);
-    box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(217, 119, 6, 0.2);
+  .gov-card-hover:hover {
+    @apply shadow-gov-md border-gov-blue-200;
+    transform: translateY(-1px);
   }
-
-  .gazette-header-ribbon {
-    background: linear-gradient(90deg, #b45309 0%, #d97706 30%, #475569 50%, #047857 70%, #065f46 100%);
+  .tricolor-bar {
+    background: linear-gradient(90deg, #FF9933 0%, #FF9933 33%, #FFFFFF 33%, #FFFFFF 66%, #138808 66%, #138808 100%);
   }
-
-  .badge-formal {
-    @apply inline-flex items-center gap-1.5 px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wider rounded-sm border font-mono;
+  .badge-gov {
+    @apply inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold rounded-md;
   }
 }
 
-/* Print styles for Official Census Certificate */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in { animation: fadeIn 0.25s ease-out forwards; }
+
 @media print {
-  body * {
-    visibility: hidden;
-  }
-  #census-certificate-print-area, #census-certificate-print-area * {
-    visibility: visible;
-  }
+  body * { visibility: hidden; }
+  #census-certificate-print-area, #census-certificate-print-area * { visibility: visible; }
   #census-certificate-print-area {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-    background: white !important;
-    color: black !important;
-    font-family: "Source Serif 4", Georgia, serif !important;
+    position: absolute; left: 0; top: 0; width: 100%;
+    background: white !important; color: black !important;
   }
 }

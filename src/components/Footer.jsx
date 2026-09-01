@@ -1,113 +1,51 @@
 import React from 'react';
 import { useLanguage } from '../context/LanguageContext';
-import { ShieldCheck, PhoneCall, FileText, Lock, ExternalLink, Scale, Landmark } from 'lucide-react';
+import { ExternalLink } from 'lucide-react';
 
 export default function Footer() {
-  const { t, language } = useLanguage();
+  const { language } = useLanguage();
 
   return (
-    <footer className="w-full bg-[#050a12] border-t border-slate-800 pt-12 pb-8 text-slate-400 font-sans">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
-        {/* Upper Gazette Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 pb-8 border-b border-slate-800/80 text-xs">
-          {/* Col 1: Government Authority */}
-          <div className="space-y-3 md:col-span-1">
-            <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-sm bg-[#0c1829] border border-amber-500/40 flex items-center justify-center text-amber-400 font-black text-sm">
-                🇮🇳
-              </div>
-              <div>
-                <span className="font-serif font-bold text-white text-sm block">
-                  {t('portalTitle')}
-                </span>
-                <span className="text-[10px] font-mono text-slate-500 block uppercase">
-                  STATUTORY REPOSITORY
-                </span>
-              </div>
-            </div>
-            <p className="text-xs text-slate-400 leading-relaxed font-sans">
-              {t('slipGovt')}
+    <footer className="bg-gov-blue-900 text-white mt-auto" role="contentinfo">
+      <div className="h-1 tricolor-bar" />
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div>
+            <h4 className="font-bold text-base text-white mb-3">
+              {language === 'hi' ? 'जनगणना 2027 पोर्टल' : 'Census 2027 Portal'}
+            </h4>
+            <p className="text-sm text-blue-200 leading-relaxed max-w-sm">
+              {language === 'hi'
+                ? 'भारत के महापंजीयक एवं जनगणना आयुक्त कार्यालय, गृह मंत्रालय, भारत सरकार'
+                : 'Office of the Registrar General & Census Commissioner, Ministry of Home Affairs, Government of India'}
             </p>
-            <div className="pt-1">
-              <span className="badge-formal bg-emerald-950/40 text-emerald-400 border-emerald-800">
-                <ShieldCheck className="w-3.5 h-3.5" aria-hidden="true" />
-                <span>{t('dpdpBadge')}</span>
-              </span>
-            </div>
           </div>
-
-          {/* Col 2: Official Portals */}
-          <div className="space-y-2.5">
-            <h4 className="font-mono text-xs font-bold uppercase tracking-wider text-slate-200 border-b border-slate-800 pb-1">
-              {language === 'hi' ? 'आधिकारिक पोर्टल' : 'Official Portals'}
+          <div>
+            <h4 className="font-semibold text-sm text-blue-200 uppercase tracking-wider mb-3">
+              {language === 'hi' ? 'त्वरित लिंक' : 'Quick Links'}
             </h4>
-            <ul className="space-y-2">
-              <li>
-                <a href="https://censusindia.gov.in" target="_blank" rel="noreferrer" className="hover:text-amber-400 flex items-center justify-between transition group">
-                  <span>Census of India (ORGI)</span>
-                  <ExternalLink className="w-3 h-3 text-slate-600 group-hover:text-amber-400" />
-                </a>
-              </li>
-              <li>
-                <a href="https://digitalindia.gov.in" target="_blank" rel="noreferrer" className="hover:text-amber-400 flex items-center justify-between transition group">
-                  <span>Digital India Initiative</span>
-                  <ExternalLink className="w-3 h-3 text-slate-600 group-hover:text-amber-400" />
-                </a>
-              </li>
-              <li>
-                <a href="https://mha.gov.in" target="_blank" rel="noreferrer" className="hover:text-amber-400 flex items-center justify-between transition group">
-                  <span>Ministry of Home Affairs</span>
-                  <ExternalLink className="w-3 h-3 text-slate-600 group-hover:text-amber-400" />
-                </a>
-              </li>
+            <ul className="space-y-2 text-sm text-blue-200">
+              <li><a href="https://censusindia.gov.in" target="_blank" rel="noopener noreferrer" className="hover:text-white flex items-center gap-1 transition">Census India <ExternalLink className="w-3 h-3" /></a></li>
+              <li><a href="https://india.gov.in" target="_blank" rel="noopener noreferrer" className="hover:text-white flex items-center gap-1 transition">India.gov.in <ExternalLink className="w-3 h-3" /></a></li>
+              <li><a href="https://mha.gov.in" target="_blank" rel="noopener noreferrer" className="hover:text-white flex items-center gap-1 transition">{language === 'hi' ? 'गृह मंत्रालय' : 'MHA'} <ExternalLink className="w-3 h-3" /></a></li>
             </ul>
           </div>
-
-          {/* Col 3: Statutory Safeguards */}
-          <div className="space-y-2.5">
-            <h4 className="font-mono text-xs font-bold uppercase tracking-wider text-slate-200 border-b border-slate-800 pb-1">
-              {language === 'hi' ? 'वैधानिक सुरक्षा' : 'Statutory Safeguards'}
+          <div>
+            <h4 className="font-semibold text-sm text-blue-200 uppercase tracking-wider mb-3">
+              {language === 'hi' ? 'कानूनी' : 'Legal'}
             </h4>
-            <ul className="space-y-2">
-              <li className="flex items-center gap-2 text-slate-300">
-                <Scale className="w-3.5 h-3.5 text-amber-500 shrink-0" aria-hidden="true" />
-                <span>Census Act 1948 (Sec 15 Inadmissible)</span>
-              </li>
-              <li className="flex items-center gap-2 text-slate-300">
-                <ShieldCheck className="w-3.5 h-3.5 text-emerald-500 shrink-0" aria-hidden="true" />
-                <span>DPDP Act 2023 Statutory Privacy</span>
-              </li>
-              <li className="flex items-center gap-2 text-slate-300">
-                <Lock className="w-3.5 h-3.5 text-sky-500 shrink-0" aria-hidden="true" />
-                <span>Zero Commercial Data Dissemination</span>
-              </li>
+            <ul className="space-y-2 text-sm text-blue-200">
+              <li>{language === 'hi' ? 'जनगणना अधिनियम, 1948' : 'Census Act, 1948'}</li>
+              <li>{language === 'hi' ? 'DPDP अधिनियम, 2023' : 'DPDP Act, 2023'}</li>
+              <li>{language === 'hi' ? 'गोपनीयता नीति' : 'Privacy Policy'}</li>
             </ul>
-          </div>
-
-          {/* Col 4: National Helpdesk */}
-          <div className="space-y-2.5">
-            <h4 className="font-mono text-xs font-bold uppercase tracking-wider text-slate-200 border-b border-slate-800 pb-1">
-              {language === 'hi' ? 'राष्ट्रीय सहायता केंद्र' : 'National Helpdesk'}
-            </h4>
-            <div className="p-3 bg-[#0c1829] border border-slate-800 rounded-sm">
-              <div className="flex items-center gap-2 text-amber-400 font-mono">
-                <PhoneCall className="w-3.5 h-3.5" aria-hidden="true" />
-                <span className="text-sm font-bold tracking-wider">1800-11-2027</span>
-              </div>
-              <p className="text-[11px] text-slate-400 mt-1 leading-snug">
-                {language === 'hi' ? 'टोल-फ्री राष्ट्रीय हेल्पलाइन (24x7 उपलब्ध)' : 'Toll-Free National Helpline (24x7 Multi-lingual)'}
-              </p>
-            </div>
           </div>
         </div>
-
-        {/* Lower Gazette Ribbon */}
-        <div className="flex flex-col md:flex-row items-center justify-between gap-3 text-[11px] text-slate-500 font-mono">
-          <p className="text-center md:text-left">
-            {t('footerRights')}
-          </p>
-          <p className="text-amber-500/80 text-center font-sans">
-            {t('footerDisclaimer')}
+        <div className="border-t border-white/15 mt-8 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-blue-300">
+          <p>© 2027 {language === 'hi' ? 'भारत सरकार' : 'Government of India'} | {language === 'hi' ? 'हैकाथॉन डेमो प्रोटोटाइप' : 'Hackathon Demo Prototype'}</p>
+          <p className="flex items-center gap-1">
+            <span>{language === 'hi' ? 'आशा AI द्वारा संचालित' : 'Powered by Asha AI'}</span>
+            <span className="text-gov-saffron-400">✦</span>
           </p>
         </div>
       </div>

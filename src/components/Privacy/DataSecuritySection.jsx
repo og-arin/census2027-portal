@@ -1,79 +1,46 @@
 import React from 'react';
 import { useLanguage } from '../../context/LanguageContext';
-import { Scale, Lock, EyeOff, ShieldCheck, FileText, CheckCircle2 } from 'lucide-react';
+import { ShieldCheck, Lock, Scale, Server } from 'lucide-react';
 
 export default function DataSecuritySection() {
-  const { t, language } = useLanguage();
+  const { language } = useLanguage();
 
-  const securityFeatures = [
+  const provisions = [
     {
-      code: "CLAUSE-15",
-      title: t('secCensusActTitle'),
-      desc: t('secCensusActDesc'),
       icon: Scale,
-      color: "text-amber-400"
+      title: language === 'hi' ? 'जनगणना अधिनियम, 1948 — धारा 15' : 'Census Act, 1948 — Section 15',
+      desc: language === 'hi' ? 'सभी व्यक्तिगत डेटा कानूनी रूप से गोपनीय है। किसी अन्य विभाग, अदालत या कानून प्रवर्तन को साझा नहीं किया जा सकता।' : 'All individual data is legally confidential. Cannot be shared with any other department, court, or law enforcement.',
+      color: 'gov-blue',
     },
     {
-      code: "DPDP-2023",
-      title: t('secDPDPTitle'),
-      desc: t('secDPDPDesc'),
-      icon: ShieldCheck,
-      color: "text-emerald-400"
-    },
-    {
-      code: "CRYPTO-256",
-      title: t('secEncryptionTitle'),
-      desc: t('secEncryptionDesc'),
       icon: Lock,
-      color: "text-sky-400"
+      title: language === 'hi' ? 'DPDP अधिनियम, 2023' : 'DPDP Act, 2023',
+      desc: language === 'hi' ? 'डिजिटल व्यक्तिगत डेटा संरक्षण अधिनियम के तहत पूर्ण सहमति-आधारित प्रसंस्करण और एन्क्रिप्शन।' : 'Full consent-based processing and encryption under the Digital Personal Data Protection Act.',
+      color: 'gov-saffron',
     },
     {
-      code: "NON-DISCLOSURE",
-      title: t('secAnonymizationTitle'),
-      desc: t('secAnonymizationDesc'),
-      icon: EyeOff,
-      color: "text-rose-400"
-    }
+      icon: Server,
+      title: language === 'hi' ? 'AES-256 एन्क्रिप्शन' : 'AES-256 Encryption',
+      desc: language === 'hi' ? 'सभी डेटा ट्रांजिट और स्टोरेज में एन्क्रिप्टेड। भारत में स्थित सरकारी सर्वर पर संग्रहीत।' : 'All data encrypted in transit and at rest. Stored on government servers located in India.',
+      color: 'gov-green',
+    },
   ];
 
   return (
-    <div className="w-full bg-[#0a1424] border border-slate-700 rounded-sm p-6 sm:p-8 shadow-xl font-sans space-y-6">
-      <div className="border-b border-slate-800 pb-4">
-        <span className="text-[10px] font-mono font-bold text-amber-500 uppercase tracking-widest block">
-          STATUTORY COMPLIANCE & LEGAL ASSURANCES
-        </span>
-        <h2 className="font-serif text-xl sm:text-2xl font-bold text-white mt-1">
-          {t('dataSecurityHeading')}
-        </h2>
-        <p className="text-xs sm:text-sm text-slate-300 font-sans mt-0.5">
-          {t('dataSecuritySubheading')}
-        </p>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 font-sans">
-        {securityFeatures.map((feat, idx) => {
-          const Icon = feat.icon;
-          return (
-            <div
-              key={idx}
-              className="p-5 bg-[#070e18] border border-slate-800 rounded-sm hover:border-slate-700 transition"
-            >
-              <div className="flex items-center justify-between mb-3 border-b border-slate-850 pb-2">
-                <span className="text-[10px] font-mono font-bold text-slate-400">
-                  {feat.code}
-                </span>
-                <Icon className={`w-4 h-4 ${feat.color}`} aria-hidden="true" />
-              </div>
-              <h3 className="font-serif font-bold text-white text-sm sm:text-base">
-                {feat.title}
-              </h3>
-              <p className="text-xs text-slate-300 mt-1.5 leading-relaxed">
-                {feat.desc}
-              </p>
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+      {provisions.map((p, i) => {
+        const Icon = p.icon;
+        const bgMap = { 'gov-blue': 'bg-gov-blue-50 border-gov-blue-200 text-gov-blue-700', 'gov-saffron': 'bg-gov-saffron-50 border-gov-saffron-200 text-gov-saffron-600', 'gov-green': 'bg-gov-green-50 border-gov-green-200 text-gov-green-500' };
+        return (
+          <div key={i} className="gov-card gov-card-hover rounded-lg p-5 sm:p-6">
+            <div className={`w-11 h-11 rounded-lg border flex items-center justify-center mb-4 ${bgMap[p.color]}`}>
+              <Icon className="w-5 h-5" />
             </div>
-          );
-        })}
-      </div>
+            <h3 className="font-bold text-gray-900 text-sm mb-2">{p.title}</h3>
+            <p className="text-xs text-gray-500 font-body leading-relaxed">{p.desc}</p>
+          </div>
+        );
+      })}
     </div>
   );
 }

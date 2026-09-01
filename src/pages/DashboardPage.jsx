@@ -1,73 +1,57 @@
-import React from 'react';
+import React, { useState, Suspense, lazy } from 'react';
 import { useLanguage } from '../context/LanguageContext';
 import MetricCards from '../components/Dashboard/MetricCards';
-import PopulationChart from '../components/Dashboard/PopulationChart';
-import AgePyramidChart from '../components/Dashboard/AgePyramidChart';
-import LiteracyChart from '../components/Dashboard/LiteracyChart';
-import AmenitiesChart from '../components/Dashboard/AmenitiesChart';
-import { BarChart3, Database, FileSpreadsheet, Download, RefreshCw, Landmark } from 'lucide-react';
+import ChartSkeleton from '../components/Dashboard/ChartSkeleton';
+import { BarChart3, Download, Printer } from 'lucide-react';
+
+const PopulationChart = lazy(() => import('../components/Dashboard/PopulationChart'));
+const AgePyramidChart = lazy(() => import('../components/Dashboard/AgePyramidChart'));
+const LiteracyChart = lazy(() => import('../components/Dashboard/LiteracyChart'));
+const AmenitiesChart = lazy(() => import('../components/Dashboard/AmenitiesChart'));
 
 export default function DashboardPage() {
   const { t, language } = useLanguage();
 
   return (
-    <div className="w-full space-y-8 pb-12 font-sans">
-      {/* Formal Statistical Bulletin Header */}
-      <div className="p-6 sm:p-8 bg-[#0a1424] border border-slate-700 rounded-sm shadow-xl flex flex-col md:flex-row md:items-center md:justify-between gap-6">
-        <div className="space-y-1.5">
-          <div className="flex items-center gap-2 font-mono text-[10px] font-bold text-amber-500 uppercase tracking-widest">
-            <Landmark className="w-3.5 h-3.5" aria-hidden="true" />
-            <span>STATISTICAL BULLETIN NO. CEN2027-REP-01 • DEMOGRAPHIC REPOSITORY</span>
+    <div className="bg-gray-50 min-h-screen py-8 sm:py-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+        {/* Header */}
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div>
+            <p className="text-sm font-semibold text-gov-saffron-500 uppercase tracking-wider">{language === 'hi' ? 'डैशबोर्ड' : 'Dashboard'}</p>
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mt-1">{t('dashboardTitle')}</h1>
+            <p className="text-sm text-gray-500 mt-1 font-body">{t('dashboardSubtitle')}</p>
           </div>
-          <h1 className="font-serif text-2xl sm:text-4xl font-extrabold text-white tracking-tight">
-            {t('dashTitle')}
-          </h1>
-          <p className="text-xs sm:text-sm text-slate-300 font-sans max-w-2xl">
-            {t('dashSubtitle')}
-          </p>
+          <div className="flex items-center gap-2">
+            <button type="button" className="px-3 py-2 bg-white border border-gray-200 rounded-lg text-sm text-gray-600 hover:bg-gray-50 flex items-center gap-2 transition" onClick={() => window.print()}>
+              <Printer className="w-4 h-4" /><span className="hidden sm:inline">Print</span>
+            </button>
+          </div>
         </div>
 
-        {/* Report Metadata Controls */}
-        <div className="flex flex-wrap items-center gap-3 font-mono text-xs">
-          <div className="p-2.5 px-3 bg-[#070e18] border border-slate-800 rounded-sm text-left">
-            <span className="text-[9px] text-slate-500 block uppercase">LAST SYNCHRONIZED:</span>
-            <span className="font-bold text-slate-200 text-xs">
-              {new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}
-            </span>
-          </div>
-
-          <button
-            type="button"
-            onClick={() => window.print()}
-            className="flex items-center gap-2 px-4 py-2.5 bg-[#0c1829] hover:bg-slate-800 text-slate-200 border border-slate-700 rounded-sm font-bold transition"
-          >
-            <Download className="w-3.5 h-3.5 text-amber-400" aria-hidden="true" />
-            <span>PRINT BULLETIN</span>
-          </button>
-        </div>
-      </div>
-
-      {/* KPI Metric Panels */}
-      <section aria-label="Key Demographic Indicators">
+        {/* Metrics */}
         <MetricCards />
-      </section>
 
-      {/* Primary Visualizations Grid (Styled like Official Report Panels) */}
-      <section className="grid grid-cols-1 lg:grid-cols-2 gap-6" aria-label="Population and Demographics">
-        <PopulationChart />
-        <AgePyramidChart />
-      </section>
+        {/* Charts */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <Suspense fallback={<ChartSkeleton title="Population Data" />}>
+            <PopulationChart />
+          </Suspense>
+          <Suspense fallback={<ChartSkeleton title="Age Pyramid" />}>
+            <AgePyramidChart />
+          </Suspense>
+          <Suspense fallback={<ChartSkeleton title="Literacy Data" />}>
+            <LiteracyChart />
+          </Suspense>
+          <Suspense fallback={<ChartSkeleton title="Amenities Data" />}>
+            <AmenitiesChart />
+          </Suspense>
+        </div>
 
-      {/* Secondary Socio-Economic Visualizations */}
-      <section className="grid grid-cols-1 lg:grid-cols-2 gap-6" aria-label="Literacy and Household Infrastructure">
-        <LiteracyChart />
-        <AmenitiesChart />
-      </section>
-
-      {/* Official Data Source Attribution Footer */}
-      <div className="p-4 bg-[#070e18] border border-slate-800 rounded-sm font-mono text-[10.5px] text-slate-400 flex flex-col sm:flex-row items-center justify-between gap-2">
-        <span>DATA SOURCE: OFFICE OF THE REGISTRAR GENERAL & CENSUS COMMISSIONER, INDIA</span>
-        <span>AGGREGATE STATISTICAL DISCLOSURE • SECTION 15 COMPLIANT</span>
+        {/* Note */}
+        <div className="text-center text-xs text-gray-400 font-body py-4 border-t border-gray-200">
+          {language === 'hi' ? 'उपरोक्त आंकड़े सांकेतिक हैं। वास्तविक जनगणना डेटा 2028 में प्रकाशित होगा।' : 'Above figures are indicative. Actual census data will be published in 2028.'}
+        </div>
       </div>
     </div>
   );

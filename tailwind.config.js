@@ -4,65 +4,58 @@ export default {
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
-  darkMode: 'class',
   theme: {
     extend: {
       colors: {
-        formal: {
-          navy: {
-            50: '#f1f5f9',
-            100: '#e2e8f0',
-            200: '#cbd5e1',
-            300: '#94a3b8',
-            400: '#64748b',
-            500: '#475569',
-            600: '#334155',
-            700: '#1e293b',
-            800: '#112238', // Formal Ministry Indigo
-            850: '#0c1829', // Card Panel Slate
-            900: '#070e18', // Primary Deep Base
-            950: '#040810',
+        gov: {
+          blue: {
+            50: '#eff6ff',
+            100: '#dbeafe',
+            200: '#bfdbfe',
+            300: '#93c5fd',
+            400: '#60a5fa',
+            500: '#2563eb',
+            600: '#1d4ed8',
+            700: '#003580',
+            800: '#002a6b',
+            900: '#001d4a',
           },
           saffron: {
-            light: '#fbbf24',
-            DEFAULT: '#d97706', // Formal Muted Saffron
-            dark: '#b45309',
-            deep: '#92400e',
+            50: '#fff7ed',
+            100: '#ffedd5',
+            200: '#fed7aa',
+            300: '#fdba74',
+            400: '#fb923c',
+            500: '#FF9933',
+            600: '#ea580c',
+            700: '#c2410c',
           },
-          terracotta: {
-            light: '#f43f5e',
-            DEFAULT: '#be123c', // Formal Muted Crimson/Rose
-            dark: '#9f1239',
+          green: {
+            50: '#ecfdf5',
+            100: '#d1fae5',
+            200: '#a7f3d0',
+            400: '#34d399',
+            500: '#138808',
+            600: '#059669',
+            700: '#047857',
           },
-          emerald: {
-            light: '#10b981',
-            DEFAULT: '#047857', // Official India Green
-            dark: '#065f46',
-          },
-          parchment: {
-            DEFAULT: '#f8fafc',
-            dark: '#0f172a',
-            border: '#1e293b',
-          }
+          cream: '#FFFDF7',
+          warm: '#FFF8F0',
         }
       },
       fontFamily: {
-        serif: ['"Source Serif 4"', 'Merriweather', 'Georgia', 'Cambria', 'serif'],
-        sans: ['Inter', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
-        mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'monospace'],
+        sans: ['Poppins', 'Noto Sans', 'system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'sans-serif'],
+        body: ['Noto Sans', 'Poppins', 'system-ui', 'sans-serif'],
       },
       boxShadow: {
-        'formal-sm': '0 1px 3px 0 rgba(0, 0, 0, 0.5), 0 1px 2px -1px rgba(0, 0, 0, 0.5)',
-        'formal': '0 4px 12px 0 rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.07)',
-        'formal-elevated': '0 10px 25px -3px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(217, 119, 6, 0.25)',
+        'gov': '0 2px 8px rgba(0, 0, 0, 0.08)',
+        'gov-md': '0 4px 16px rgba(0, 0, 0, 0.1)',
+        'gov-lg': '0 8px 30px rgba(0, 0, 0, 0.12)',
       },
       borderRadius: {
-        'none': '0px',
-        'sm': '2px',
-        DEFAULT: '4px',
-        'md': '6px',
-        'lg': '8px',
-        'xl': '12px',
+        DEFAULT: '6px',
+        'md': '8px',
+        'lg': '12px',
       }
     },
   },

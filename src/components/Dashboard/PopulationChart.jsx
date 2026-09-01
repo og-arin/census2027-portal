@@ -1,78 +1,36 @@
-import React, { useMemo } from 'react';
+import React from 'react';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import { useLanguage } from '../../context/LanguageContext';
-import { populationByStateData } from '../../data/dummyDashboardData';
-import { 
-  ResponsiveContainer, 
-  BarChart, 
-  Bar, 
-  XAxis, 
-  YAxis, 
-  Tooltip, 
-  CartesianGrid, 
-  Cell 
-} from 'recharts';
-import { BarChart3, FileSpreadsheet } from 'lucide-react';
+import { useCensusData } from '../../context/CensusDataContext';
+
+const COLORS = ['#2563eb', '#FF9933', '#138808', '#7c3aed', '#dc2626', '#0891b2', '#ea580c'];
 
 export default function PopulationChart() {
   const { t, language } = useLanguage();
-
-  const data = useMemo(() => populationByStateData, []);
-
-  const CustomTooltip = ({ active, payload, label }) => {
-    if (active && payload && payload.length) {
-      return (
-        <div className="bg-[#070e18] border border-slate-700 p-3 rounded-sm shadow-2xl text-xs font-mono space-y-1">
-          <p className="font-bold text-white font-serif">{label}</p>
-          <p className="text-amber-400 font-semibold">
-            POPULATION: {payload[0].value}M PERSONS
-          </p>
-          <p className="text-slate-400 text-[10px]">
-            HOUSEHOLDS: {payload[0].payload.households}M UNITS
-          </p>
-        </div>
-      );
-    }
-    return null;
-  };
+  const { censusData } = useCensusData();
 
   return (
-    <div className="w-full bg-[#0c1829] border border-slate-700 rounded-sm p-5 sm:p-6 shadow-xl font-sans">
-      {/* Formal Panel Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-5 pb-3 border-b border-slate-800">
+    <div className="gov-card gov-card-hover rounded-lg p-5 sm:p-6">
+      <div className="flex items-center justify-between mb-5 border-b border-gray-100 pb-3">
         <div>
-          <div className="text-[10px] font-mono font-bold text-amber-500 uppercase tracking-widest">
-            FIGURE 1.0 • DEMOGRAPHIC PROJECTION
-          </div>
-          <h3 className="font-serif font-bold text-white text-base sm:text-lg">
-            {t('chartPopState')}
-          </h3>
-          <p className="text-xs text-slate-400 font-sans mt-0.5">
-            {language === 'hi' ? 'शीर्ष १० जनसांख्यिकीय राज्यों में अनुमानित जनसंख्या' : 'Projected 2026-2027 population across top demographic zones'}
-          </p>
+          <h3 className="text-sm font-bold text-gray-900">{t('chartPopulationTitle')}</h3>
+          <p className="text-xs text-gray-500 mt-0.5 font-body">{language === 'hi' ? 'राज्यवार जनसंख्या वितरण' : 'State-wise population distribution'}</p>
         </div>
-        <span className="badge-formal bg-[#070e18] text-slate-300 border-slate-700 self-start sm:self-center">
-          TOP 10 STATES
-        </span>
+        <span className="badge-gov bg-gov-blue-50 text-gov-blue-700 border border-gov-blue-200">{language === 'hi' ? 'लाखों में' : 'In Lakhs'}</span>
       </div>
-
-      {/* Chart Canvas */}
-      <div className="w-full h-72">
+      <div className="h-72">
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={data} margin={{ top: 10, right: 10, left: -20, bottom: 20 }}>
-            <CartesianGrid strokeDasharray="2 2" stroke="#1e293b" vertical={false} />
-            <XAxis 
-              dataKey="state" 
-              tick={{ fill: '#94a3b8', fontSize: 10, fontFamily: 'monospace' }} 
-              interval={0}
-              angle={-25}
-              textAnchor="end"
+          <BarChart data={censusData.population} margin={{ top: 5, right: 5, left: -15, bottom: 5 }}>
+            <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" vertical={false} />
+            <XAxis dataKey={language === 'hi' ? 'state_hi' : 'state'} tick={{ fill: '#6b7280', fontSize: 11, fontFamily: 'Poppins' }} axisLine={{ stroke: '#e5e7eb' }} tickLine={false} />
+            <YAxis tick={{ fill: '#6b7280', fontSize: 11 }} axisLine={false} tickLine={false} tickFormatter={v => `${(v / 100000).toFixed(0)}L`} />
+            <Tooltip
+              contentStyle={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: 8, boxShadow: '0 4px 16px rgba(0,0,0,0.08)', fontSize: 12, fontFamily: 'Poppins' }}
+              labelStyle={{ fontWeight: 600, color: '#111827' }}
+              formatter={(value) => [value.toLocaleString('en-IN'), language === 'hi' ? 'जनसंख्या' : 'Population']}
             />
-            <YAxis tick={{ fill: '#94a3b8', fontSize: 11, fontFamily: 'monospace' }} />
-            <Tooltip content={<CustomTooltip />} />
-            <Bar dataKey="population" radius={[0, 0, 0, 0]}>
-              {data.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={entry.color || '#d97706'} />
-              ))}
+            <Bar dataKey="population" radius={[6, 6, 0, 0]} maxBarSize={40}>
+              {censusData.population.map((_, i) => <Cell key={i} fill={COLORS[i % COLORS.length]} />)}
             </Bar>
           </BarChart>
         </ResponsiveContainer>

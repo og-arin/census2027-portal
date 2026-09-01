@@ -1,89 +1,44 @@
-import React, { useMemo } from 'react';
+import React from 'react';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, ReferenceLine } from 'recharts';
 import { useLanguage } from '../../context/LanguageContext';
-import { agePyramidData } from '../../data/dummyDashboardData';
-import { 
-  ResponsiveContainer, 
-  BarChart, 
-  Bar, 
-  XAxis, 
-  YAxis, 
-  Tooltip, 
-  CartesianGrid 
-} from 'recharts';
+import { useCensusData } from '../../context/CensusDataContext';
 
 export default function AgePyramidChart() {
   const { t, language } = useLanguage();
+  const { censusData } = useCensusData();
 
-  const data = useMemo(() => agePyramidData, []);
-
-  const CustomTooltip = ({ active, payload, label }) => {
-    if (active && payload && payload.length) {
-      const maleVal = Math.abs(payload[0]?.value || 0);
-      const femaleVal = payload[1]?.value || 0;
-      return (
-        <div className="bg-[#070e18] border border-slate-700 p-3 rounded-sm shadow-2xl text-xs font-mono space-y-1">
-          <p className="font-bold text-white font-serif">AGE COHORT: {label}</p>
-          <p className="text-amber-400 font-semibold">
-            {t('chartMale')}: {maleVal}%
-          </p>
-          <p className="text-emerald-400 font-semibold">
-            {t('chartFemale')}: {femaleVal}%
-          </p>
-        </div>
-      );
-    }
-    return null;
-  };
+  const pyramidData = censusData.agePyramid.map(d => ({
+    ...d,
+    maleNeg: -d.male,
+    age_group: d.age_group,
+  }));
 
   return (
-    <div className="w-full bg-[#0c1829] border border-slate-700 rounded-sm p-5 sm:p-6 shadow-xl font-sans">
-      {/* Formal Panel Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-5 pb-3 border-b border-slate-800">
+    <div className="gov-card gov-card-hover rounded-lg p-5 sm:p-6">
+      <div className="flex items-center justify-between mb-5 border-b border-gray-100 pb-3">
         <div>
-          <div className="text-[10px] font-mono font-bold text-emerald-500 uppercase tracking-widest">
-            FIGURE 2.0 • DEMOGRAPHIC AGE-SEX COHORT
-          </div>
-          <h3 className="font-serif font-bold text-white text-base sm:text-lg">
-            {t('chartAgePyramid')}
-          </h3>
-          <p className="text-xs text-slate-400 font-sans mt-0.5">
-            {language === 'hi' ? 'पुरुष (बाएं) बनाम महिला (दाएं) आयु वितरण' : 'Male (Left) vs Female (Right) age distribution cohorts'}
-          </p>
+          <h3 className="text-sm font-bold text-gray-900">{t('chartAgePyramidTitle')}</h3>
+          <p className="text-xs text-gray-500 mt-0.5 font-body">{language === 'hi' ? 'आयु एवं लिंग आधारित वितरण' : 'Age & gender distribution'}</p>
         </div>
-
-        <div className="flex items-center gap-2 font-mono text-[10px]">
-          <span className="badge-formal bg-[#070e18] text-amber-400 border-amber-800">
-            MALE (L)
-          </span>
-          <span className="badge-formal bg-[#070e18] text-emerald-400 border-emerald-800">
-            FEMALE (R)
-          </span>
+        <div className="flex items-center gap-3 text-[11px] font-semibold">
+          <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-sm bg-gov-blue-500" />{language === 'hi' ? 'पुरुष' : 'Male'}</span>
+          <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-sm bg-gov-saffron-500" />{language === 'hi' ? 'महिला' : 'Female'}</span>
         </div>
       </div>
-
-      <div className="w-full h-72">
+      <div className="h-80">
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart
-            layout="vertical"
-            data={data}
-            stackOffset="sign"
-            margin={{ top: 5, right: 20, left: 10, bottom: 5 }}
-          >
-            <CartesianGrid strokeDasharray="2 2" stroke="#1e293b" horizontal={false} />
-            <XAxis 
-              type="number" 
-              tickFormatter={(v) => `${Math.abs(v)}%`} 
-              domain={[-12, 12]} 
-              tick={{ fill: '#94a3b8', fontSize: 10, fontFamily: 'monospace' }} 
+          <BarChart layout="vertical" data={pyramidData} margin={{ top: 5, right: 10, left: 5, bottom: 5 }} stackOffset="sign">
+            <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" horizontal={false} />
+            <XAxis type="number" tick={{ fill: '#6b7280', fontSize: 11 }} axisLine={false} tickLine={false} tickFormatter={v => `${Math.abs(v / 1000)}K`} />
+            <YAxis dataKey="age_group" type="category" tick={{ fill: '#6b7280', fontSize: 10, fontFamily: 'Poppins' }} axisLine={false} tickLine={false} width={50} />
+            <Tooltip
+              contentStyle={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: 8, boxShadow: '0 4px 16px rgba(0,0,0,0.08)', fontSize: 12, fontFamily: 'Poppins' }}
+              formatter={(value) => [Math.abs(value).toLocaleString('en-IN'), '']}
+              labelStyle={{ fontWeight: 600, color: '#111827' }}
             />
-            <YAxis 
-              dataKey="ageGroup" 
-              type="category" 
-              tick={{ fill: '#cbd5e1', fontSize: 11, fontFamily: 'monospace' }} 
-            />
-            <Tooltip content={<CustomTooltip />} />
-            <Bar dataKey="male" fill="#d97706" stackId="stack" radius={[0, 0, 0, 0]} />
-            <Bar dataKey="female" fill="#047857" stackId="stack" radius={[0, 0, 0, 0]} />
+            <ReferenceLine x={0} stroke="#d1d5db" />
+            <Bar dataKey="maleNeg" fill="#2563eb" radius={[4, 0, 0, 4]} maxBarSize={16} name={language === 'hi' ? 'पुरुष' : 'Male'} />
+            <Bar dataKey="female" fill="#FF9933" radius={[0, 4, 4, 0]} maxBarSize={16} name={language === 'hi' ? 'महिला' : 'Female'} />
           </BarChart>
         </ResponsiveContainer>
       </div>

@@ -1,80 +1,69 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import { useLanguage } from '../../context/LanguageContext';
-import { kpiSummary } from '../../data/dummyDashboardData';
-import { Users, Home, BookOpen, Smartphone, TrendingUp, FileText } from 'lucide-react';
+import { useCensusData } from '../../context/CensusDataContext';
+import { Users, Home, GraduationCap, TrendingUp, BarChart3, Percent } from 'lucide-react';
 
 export default function MetricCards() {
   const { t, language } = useLanguage();
+  const { censusData } = useCensusData();
 
-  const cards = useMemo(() => [
+  const totalPop = censusData.population.reduce((s, d) => s + d.population, 0);
+  const avgLit = (censusData.literacy.reduce((s, d) => s + d.male + d.female, 0) / (censusData.literacy.length * 2)).toFixed(1);
+  const totalHouseholds = Math.round(totalPop / 4.5);
+  const growthRate = "1.12%";
+
+  const cards = [
     {
-      code: "METRIC-01",
-      title: t('kpiTotalPop'),
-      value: kpiSummary.totalProjectedPopulation,
-      subtext: t('kpiGrowth'),
+      label: language === 'hi' ? 'कुल जनसंख्या' : 'Total Population',
+      value: totalPop.toLocaleString('en-IN'),
       icon: Users,
-      accent: "text-amber-400",
-      border: "border-slate-700 hover:border-amber-500/60"
+      color: 'gov-blue',
+      bg: 'bg-gov-blue-50',
+      border: 'border-gov-blue-200',
+      text: 'text-gov-blue-700',
     },
     {
-      code: "METRIC-02",
-      title: t('kpiTotalHouseholds'),
-      value: kpiSummary.householdsCompleted,
-      subtext: `Target Scope: ${kpiSummary.householdsTargeted}`,
+      label: language === 'hi' ? 'कुल परिवार' : 'Total Households',
+      value: totalHouseholds.toLocaleString('en-IN'),
       icon: Home,
-      accent: "text-sky-400",
-      border: "border-slate-700 hover:border-sky-500/60"
+      color: 'gov-saffron',
+      bg: 'bg-gov-saffron-50',
+      border: 'border-gov-saffron-200',
+      text: 'text-gov-saffron-600',
     },
     {
-      code: "METRIC-03",
-      title: t('kpiLiteracyRate'),
-      value: kpiSummary.nationalLiteracyRate,
-      subtext: "+7.4% Net Gain over 2011 Benchmark",
-      icon: BookOpen,
-      accent: "text-emerald-400",
-      border: "border-slate-700 hover:border-emerald-500/60"
+      label: language === 'hi' ? 'साक्षरता दर' : 'Avg Literacy Rate',
+      value: `${avgLit}%`,
+      icon: GraduationCap,
+      color: 'gov-green',
+      bg: 'bg-gov-green-50',
+      border: 'border-gov-green-200',
+      text: 'text-gov-green-500',
     },
     {
-      code: "METRIC-04",
-      title: t('kpiDigitalShare'),
-      value: kpiSummary.digitalSelfEnumerationShare,
-      subtext: "Self-Enumerated via Digital Portal",
-      icon: Smartphone,
-      accent: "text-amber-400",
-      border: "border-slate-700 hover:border-amber-500/60"
+      label: language === 'hi' ? 'वार्षिक वृद्धि' : 'Annual Growth',
+      value: growthRate,
+      icon: TrendingUp,
+      color: 'purple',
+      bg: 'bg-purple-50',
+      border: 'border-purple-200',
+      text: 'text-purple-600',
     }
-  ], [t]);
+  ];
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full font-sans">
-      {cards.map((card, idx) => {
+    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      {cards.map((card, i) => {
         const Icon = card.icon;
         return (
-          <div
-            key={idx}
-            className={`p-5 bg-[#0c1829] border ${card.border} rounded-sm shadow-xl transition-colors duration-150 flex flex-col justify-between`}
-          >
-            <div>
-              <div className="flex items-center justify-between mb-3 border-b border-slate-800 pb-2.5">
-                <span className="text-[10px] font-mono font-bold text-slate-400 uppercase tracking-widest">
-                  {card.code}
-                </span>
-                <span className="text-xs font-bold text-slate-300">
-                  {card.title}
-                </span>
-              </div>
-
-              <div className="py-1">
-                <h3 className="text-2xl sm:text-3xl font-serif font-black text-white tracking-tight">
-                  {card.value}
-                </h3>
+          <div key={i} className={`gov-card gov-card-hover rounded-lg p-5 border ${card.border}`}>
+            <div className="flex items-center gap-3 mb-3">
+              <div className={`w-10 h-10 rounded-lg ${card.bg} flex items-center justify-center`}>
+                <Icon className={`w-5 h-5 ${card.text}`} />
               </div>
             </div>
-
-            <div className="pt-3 border-t border-slate-800/80 mt-2 flex items-center justify-between text-[11px] font-mono">
-              <span className="text-slate-400">{card.subtext}</span>
-              <Icon className={`w-3.5 h-3.5 ${card.accent}`} aria-hidden="true" />
-            </div>
+            <p className="text-2xl font-bold text-gray-900">{card.value}</p>
+            <p className="text-xs text-gray-500 mt-1 font-body">{card.label}</p>
           </div>
         );
       })}

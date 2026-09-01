@@ -2,51 +2,47 @@ import React from 'react';
 import { useLanguage } from '../context/LanguageContext';
 import { useAuth } from '../context/AuthContext';
 import ChatContainer from '../components/ChatFlow/ChatContainer';
-import { ShieldCheck, Bot, Sparkles, UserCheck, Scale, FileText } from 'lucide-react';
+import { Bot, UserCheck } from 'lucide-react';
 
 export default function SelfEnumerationPage() {
   const { t, language } = useLanguage();
-  const { currentUser, isGuest } = useAuth();
+  const { currentUser } = useAuth();
 
   return (
-    <div className="w-full space-y-6 pb-8">
-      {/* Formal Interview Header Banner */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-5 sm:p-6 bg-[#0c1829] border border-slate-700 rounded-sm shadow-xl">
-        <div className="flex items-center gap-3.5">
-          <div className="w-12 h-12 bg-[#070e18] border border-amber-500/40 rounded-sm flex items-center justify-center text-amber-400 font-serif font-black text-xl">
-            🏛️
+    <div className="bg-gray-50 min-h-screen py-6 sm:py-8">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-5 sm:p-6 bg-white border border-gray-200 rounded-lg shadow-gov">
+          <div className="flex items-center gap-3.5">
+            <div className="w-12 h-12 bg-gov-blue-50 border border-gov-blue-200 rounded-lg flex items-center justify-center">
+              <Bot className="w-6 h-6 text-gov-blue-700" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2 flex-wrap">
+                <h1 className="text-xl sm:text-2xl font-bold text-gray-900">{t('chatTitle')}</h1>
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-gov-saffron-50 text-gov-saffron-600 border border-gov-saffron-200">
+                  {language === 'hi' ? 'आशा AI' : 'Asha AI'}
+                </span>
+              </div>
+              <p className="text-xs text-gray-500 mt-0.5 font-body">{t('chatSubtitle')}</p>
+            </div>
           </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <h1 className="font-serif text-xl sm:text-2xl font-bold text-white tracking-tight">
-                {t('chatTitle')}
-              </h1>
-              <span className="font-mono text-[10px] font-bold px-2 py-0.5 rounded-sm bg-amber-500/10 text-amber-400 border border-amber-500/30">
-                OFFICIAL DIGITAL INTERVIEW
+
+          <div className="flex items-center gap-3 p-2.5 px-4 bg-gray-50 border border-gray-200 rounded-lg text-xs">
+            <UserCheck className="w-4 h-4 text-green-500" />
+            <div>
+              <span className="text-[10px] text-gray-400 block uppercase tracking-wider">
+                {language === 'hi' ? 'नागरिक' : 'Citizen'}
+              </span>
+              <span className="text-xs font-semibold text-gray-800 truncate max-w-[140px] block">
+                {currentUser?.displayName || "Aarav Sharma"}
               </span>
             </div>
-            <p className="text-xs text-slate-300 font-sans mt-0.5">
-              {t('chatSubtitle')}
-            </p>
           </div>
         </div>
 
-        {/* Citizen Official Verification Stamp */}
-        <div className="flex items-center gap-3 p-2.5 px-4 bg-[#070e18] border border-slate-800 rounded-sm font-mono text-xs self-start sm:self-center">
-          <UserCheck className="w-4 h-4 text-emerald-400" aria-hidden="true" />
-          <div className="text-left">
-            <span className="text-[10px] text-slate-400 block uppercase tracking-wider">
-              {language === 'hi' ? 'नागरिक रिकॉर्ड' : 'CITIZEN RECORD'}
-            </span>
-            <span className="text-xs font-bold text-white truncate max-w-[140px] block">
-              {currentUser?.displayName || "Aarav Sharma"}
-            </span>
-          </div>
-        </div>
+        <ChatContainer />
       </div>
-
-      {/* Main Guided Interview Flow */}
-      <ChatContainer />
     </div>
   );
 }
