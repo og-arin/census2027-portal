@@ -1,38 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import { useLanguage } from '../../context/LanguageContext';
 import { getMisinformationFlags, reportMisinformationClaim } from '../../services/firestoreService';
-import { 
-  Radio, 
-  Send, 
-  X, 
-  ExternalLink, 
-  AlertCircle, 
-  CheckCircle, 
-  ShieldAlert, 
-  MessageSquarePlus,
-  Search
-} from 'lucide-react';
+import { ShieldAlert, Plus, ExternalLink, CheckCircle, Clock, X, Send, AlertTriangle } from 'lucide-react';
 
 export default function MisinformationReporter() {
   const { t, language } = useLanguage();
-  const [flags, setFlags] = useState([]);
+  const [claims, setClaims] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [claimText, setClaimText] = useState('');
   const [sourcePlatform, setSourcePlatform] = useState('WhatsApp Forward');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [successMsg, setSuccessMsg] = useState('');
-  const [search, setSearch] = useState('');
+  const [successMsg, setSuccessMsg] = useState(false);
 
   useEffect(() => {
-    loadFlags();
+    loadClaims();
   }, []);
 
-  const loadFlags = async () => {
+  const loadClaims = async () => {
     const data = await getMisinformationFlags();
-    setFlags(data || []);
+    setClaims(data || []);
   };
 
-  const handleReportSubmit = async (e) => {
+  const handleSubmitReport = async (e) => {
     e.preventDefault();
     if (!claimText.trim()) return;
 
@@ -42,190 +31,149 @@ export default function MisinformationReporter() {
       sourcePlatform
     });
     setIsSubmitting(false);
+    setSuccessMsg(true);
     setClaimText('');
-    setSuccessMsg(t('reportSuccess'));
-    await loadFlags();
+    await loadClaims();
 
     setTimeout(() => {
-      setSuccessMsg('');
+      setSuccessMsg(false);
       setIsModalOpen(false);
     }, 2000);
   };
 
-  const filteredFlags = flags.filter(f => 
-    f.claim_text?.toLowerCase().includes(search.toLowerCase()) ||
-    (f.claim_text_hi && f.claim_text_hi.includes(search))
-  );
-
   return (
-    <div className="w-full space-y-6">
-      {/* Header & Report Button */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-6 rounded-2xl bg-slate-900/80 border border-slate-800 backdrop-blur-xl">
+    <div className="w-full bg-[#0a1424] border border-slate-700 rounded-sm p-6 sm:p-8 shadow-xl font-sans space-y-6">
+      {/* Header with action */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-slate-800 pb-4">
         <div>
-          <h3 className="text-lg font-bold text-white flex items-center gap-2">
-            <Radio className="w-5 h-5 text-rose-400 animate-pulse" />
-            <span>{t('misinfoTitle')}</span>
-          </h3>
-          <p className="text-xs text-slate-400 mt-1">
-            {t('misinfoSubheading')}
+          <span className="text-[10px] font-mono font-bold text-amber-500 uppercase tracking-widest block">
+            STATUTORY FACT-CHECKING DIRECTORY
+          </span>
+          <h2 className="font-serif text-xl sm:text-2xl font-bold text-white mt-1">
+            {t('misinfoFeedHeading')}
+          </h2>
+          <p className="text-xs sm:text-sm text-slate-300 font-sans mt-0.5">
+            {t('misinfoFeedSubheading')}
           </p>
         </div>
 
-        <div className="flex items-center gap-3">
-          <div className="relative">
-            <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-2.5" />
-            <input
-              type="text"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search claims..."
-              className="bg-slate-950/80 border border-slate-800 rounded-xl pl-8 pr-3 py-1.5 text-xs text-white focus:outline-none focus:border-amber-500 transition"
-            />
-          </div>
-
-          <button
-            onClick={() => setIsModalOpen(true)}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-rose-500/10 hover:bg-rose-500 text-rose-300 hover:text-white border border-rose-500/30 text-xs font-bold transition shadow-sm whitespace-nowrap"
-          >
-            <MessageSquarePlus className="w-4 h-4" />
-            <span>{t('misinfoReportBtn')}</span>
-          </button>
-        </div>
+        <button
+          type="button"
+          onClick={() => setIsModalOpen(true)}
+          className="flex items-center gap-2 px-4 py-2.5 rounded-sm bg-rose-700 hover:bg-rose-600 text-white text-xs font-mono font-bold uppercase tracking-wider transition self-start sm:self-center"
+        >
+          <Plus className="w-4 h-4" aria-hidden="true" />
+          <span>{t('reportClaimBtn')}</span>
+        </button>
       </div>
 
-      {/* Flagged Claims Feed */}
+      {/* Verified Claims Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {filteredFlags.map((flag) => {
-          const claim = language === 'hi' && flag.claim_text_hi ? flag.claim_text_hi : flag.claim_text;
-          const fact = language === 'hi' && flag.fact_explanation_hi ? flag.fact_explanation_hi : flag.fact_explanation;
-          const verdict = language === 'hi' && flag.verdict_hi ? flag.verdict_hi : flag.verdict;
-
-          return (
-            <div
-              key={flag.id}
-              className="p-5 rounded-2xl bg-slate-900/60 border border-slate-800 backdrop-blur-xl flex flex-col justify-between space-y-3"
-            >
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider ${
-                    flag.is_false 
-                      ? 'bg-rose-500/10 text-rose-400 border border-rose-500/30' 
-                      : 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30'
-                  }`}>
-                    {verdict}
-                  </span>
-                  <span className="text-[10px] text-slate-500">
-                    {flag.category || 'Fact-Check'}
-                  </span>
-                </div>
-
-                <div>
-                  <span className="text-[10px] font-bold text-slate-400 block uppercase tracking-wider">
-                    {t('misinfoClaim')}
-                  </span>
-                  <p className="text-xs sm:text-sm font-semibold text-white mt-0.5">
-                    "{claim}"
-                  </p>
-                </div>
-
-                {fact && (
-                  <div className="p-3 rounded-xl bg-slate-950/70 border border-slate-800/80 text-xs text-slate-300 leading-relaxed">
-                    {fact}
-                  </div>
-                )}
+        {claims.map((item) => (
+          <div
+            key={item.id}
+            className="p-5 bg-[#070e18] border border-slate-800 rounded-sm flex flex-col justify-between space-y-3 font-sans"
+          >
+            <div>
+              <div className="flex items-center justify-between mb-2 pb-2 border-b border-slate-800/80 font-mono text-[10px]">
+                <span className="badge-formal bg-rose-950/50 text-rose-400 border-rose-700">
+                  {language === 'hi' && item.verdict_hi ? item.verdict_hi : item.verdict}
+                </span>
+                <span className="text-slate-400">
+                  Source: {item.source_url}
+                </span>
               </div>
 
-              {/* Source link */}
-              {flag.source_url && (
-                <div className="pt-2 border-t border-slate-800/60 flex items-center justify-between text-[11px] text-slate-400">
-                  <span>{t('misinfoSource')}:</span>
-                  <a
-                    href={flag.source_url.startsWith('http') ? flag.source_url : '#'}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="text-amber-400 hover:underline flex items-center gap-1 font-mono text-[10px]"
-                  >
-                    <span>{flag.source_url.replace('https://', '').slice(0, 30)}</span>
-                    <ExternalLink className="w-3 h-3" />
-                  </a>
-                </div>
-              )}
+              <h4 className="font-bold text-white text-xs sm:text-sm leading-snug">
+                "{item.claim_text}"
+              </h4>
+
+              <p className="text-xs text-slate-300 mt-2 leading-relaxed">
+                {language === 'hi' && item.fact_explanation_hi ? item.fact_explanation_hi : item.fact_explanation}
+              </p>
             </div>
-          );
-        })}
+
+            <div className="pt-2 border-t border-slate-800/60 flex items-center justify-between text-[10px] font-mono text-slate-400">
+              <span className="text-emerald-400">OFFICIALLY VERIFIED</span>
+              <span>Ref: {item.id}</span>
+            </div>
+          </div>
+        ))}
       </div>
 
-      {/* Report Misinformation Modal */}
+      {/* Citizen Report Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-fade-in">
-          <div className="relative w-full max-w-md bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl p-6">
-            <button
-              onClick={() => setIsModalOpen(false)}
-              className="absolute top-4 right-4 p-1 text-slate-400 hover:text-white rounded-lg bg-slate-800/50"
-            >
-              <X className="w-5 h-5" />
-            </button>
-
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-xl bg-rose-500/10 border border-rose-500/30 flex items-center justify-center text-rose-400">
-                <ShieldAlert className="w-5 h-5" />
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fade-in font-sans">
+          <div className="w-full max-w-lg bg-[#0a1424] border border-slate-700 rounded-sm shadow-2xl p-6 relative">
+            <div className="flex items-center justify-between mb-4 border-b border-slate-800 pb-3">
+              <div className="flex items-center gap-2 text-rose-400 font-mono text-xs font-bold uppercase">
+                <AlertTriangle className="w-4 h-4" aria-hidden="true" />
+                <span>REPORT SUSPICIOUS FORWARD</span>
               </div>
-              <div>
-                <h3 className="font-bold text-white text-base">
-                  {t('reportModalTitle')}
-                </h3>
-                <p className="text-xs text-slate-400">
-                  {t('reportModalDesc')}
-                </p>
-              </div>
+              <button
+                type="button"
+                onClick={() => setIsModalOpen(false)}
+                className="text-slate-400 hover:text-white p-1 rounded-sm"
+              >
+                <X className="w-5 h-5" aria-hidden="true" />
+              </button>
             </div>
 
             {successMsg ? (
-              <div className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs flex items-center gap-2">
-                <CheckCircle className="w-5 h-5 shrink-0" />
-                <span>{successMsg}</span>
+              <div className="py-8 text-center space-y-2">
+                <CheckCircle className="w-12 h-12 text-emerald-400 mx-auto" />
+                <p className="font-serif font-bold text-white text-base">Report Submitted</p>
+                <p className="text-xs text-slate-300">Submitted to Census 2027 Fact-Check Directorate.</p>
               </div>
             ) : (
-              <form onSubmit={handleReportSubmit} className="space-y-4">
+              <form onSubmit={handleSubmitReport} className="space-y-4">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">
-                    {t('reportClaimLabel')}
+                  <label className="block text-xs font-mono font-bold text-slate-300 uppercase mb-1">
+                    Claim or Message Text
                   </label>
                   <textarea
-                    rows={3}
-                    required
+                    rows={4}
                     value={claimText}
                     onChange={(e) => setClaimText(e.target.value)}
-                    placeholder="Paste the suspicious WhatsApp forward or claim here..."
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-rose-500 transition"
+                    required
+                    placeholder="Paste the suspicious WhatsApp message or fake advisory..."
+                    className="w-full bg-[#070e18] border border-slate-700 rounded-sm p-3 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-amber-500"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">
-                    {t('reportSourceLabel')}
+                  <label className="block text-xs font-mono font-bold text-slate-300 uppercase mb-1">
+                    Source / Platform
                   </label>
                   <select
                     value={sourcePlatform}
                     onChange={(e) => setSourcePlatform(e.target.value)}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-slate-300 focus:outline-none focus:border-rose-500 transition"
+                    className="w-full bg-[#070e18] border border-slate-700 rounded-sm p-2.5 text-xs text-slate-200 focus:outline-none focus:border-amber-500"
                   >
-                    <option value="WhatsApp Forward">WhatsApp Group / Chat</option>
-                    <option value="Facebook Post">Facebook / Meta</option>
-                    <option value="X (Twitter) Post">X (Twitter)</option>
-                    <option value="YouTube Video">YouTube Video</option>
-                    <option value="SMS / Text">SMS / Unverified Text</option>
+                    <option value="WhatsApp Forward">WhatsApp Forward</option>
+                    <option value="Facebook / Instagram">Facebook / Instagram</option>
+                    <option value="SMS / Tele-calling">SMS / Tele-calling</option>
+                    <option value="Printed Pamphlet">Printed Pamphlet</option>
                   </select>
                 </div>
 
-                <button
-                  type="submit"
-                  disabled={isSubmitting || !claimText.trim()}
-                  className="w-full py-2.5 rounded-xl bg-rose-500 hover:bg-rose-600 text-white font-bold text-xs flex items-center justify-center gap-2 transition disabled:opacity-50"
-                >
-                  <Send className="w-3.5 h-3.5" />
-                  <span>{isSubmitting ? 'Submitting...' : t('reportSubmit')}</span>
-                </button>
+                <div className="pt-3 border-t border-slate-800 flex justify-end gap-2 font-mono">
+                  <button
+                    type="button"
+                    onClick={() => setIsModalOpen(false)}
+                    className="px-4 py-2 bg-slate-800 text-slate-300 text-xs font-bold rounded-sm"
+                  >
+                    CANCEL
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="px-5 py-2 bg-amber-600 hover:bg-amber-500 text-white text-xs font-bold rounded-sm uppercase tracking-wider flex items-center gap-2"
+                  >
+                    <Send className="w-3.5 h-3.5" />
+                    <span>{isSubmitting ? 'SUBMITTING...' : 'SUBMIT REPORT'}</span>
+                  </button>
+                </div>
               </form>
             )}
           </div>

@@ -1,76 +1,79 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useLanguage } from '../../context/LanguageContext';
 import { kpiSummary } from '../../data/dummyDashboardData';
-import { Users, Home, BookOpen, Smartphone, TrendingUp, ShieldCheck } from 'lucide-react';
+import { Users, Home, BookOpen, Smartphone, TrendingUp, FileText } from 'lucide-react';
 
 export default function MetricCards() {
   const { t, language } = useLanguage();
 
-  const cards = [
+  const cards = useMemo(() => [
     {
+      code: "METRIC-01",
       title: t('kpiTotalPop'),
       value: kpiSummary.totalProjectedPopulation,
       subtext: t('kpiGrowth'),
       icon: Users,
-      color: "from-amber-500 to-amber-600",
       accent: "text-amber-400",
-      border: "border-amber-500/30"
+      border: "border-slate-700 hover:border-amber-500/60"
     },
     {
+      code: "METRIC-02",
       title: t('kpiTotalHouseholds'),
       value: kpiSummary.householdsCompleted,
-      subtext: `Target: ${kpiSummary.householdsTargeted}`,
+      subtext: `Target Scope: ${kpiSummary.householdsTargeted}`,
       icon: Home,
-      color: "from-blue-500 to-indigo-600",
       accent: "text-sky-400",
-      border: "border-blue-500/30"
+      border: "border-slate-700 hover:border-sky-500/60"
     },
     {
+      code: "METRIC-03",
       title: t('kpiLiteracyRate'),
       value: kpiSummary.nationalLiteracyRate,
-      subtext: "+7.4% since 2011",
+      subtext: "+7.4% Net Gain over 2011 Benchmark",
       icon: BookOpen,
-      color: "from-emerald-500 to-teal-600",
       accent: "text-emerald-400",
-      border: "border-emerald-500/30"
+      border: "border-slate-700 hover:border-emerald-500/60"
     },
     {
+      code: "METRIC-04",
       title: t('kpiDigitalShare'),
       value: kpiSummary.digitalSelfEnumerationShare,
-      subtext: "Self-Enumerated Online",
+      subtext: "Self-Enumerated via Digital Portal",
       icon: Smartphone,
-      color: "from-purple-500 to-pink-600",
-      accent: "text-purple-400",
-      border: "border-purple-500/30"
+      accent: "text-amber-400",
+      border: "border-slate-700 hover:border-amber-500/60"
     }
-  ];
+  ], [t]);
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full font-sans">
       {cards.map((card, idx) => {
         const Icon = card.icon;
         return (
           <div
             key={idx}
-            className={`p-5 rounded-2xl bg-slate-900/80 border ${card.border} backdrop-blur-xl hover:bg-slate-800/80 transition-all duration-300 shadow-xl group`}
+            className={`p-5 bg-[#0c1829] border ${card.border} rounded-sm shadow-xl transition-colors duration-150 flex flex-col justify-between`}
           >
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-xs font-bold text-slate-400 tracking-wide">
-                {card.title}
-              </span>
-              <div className={`w-9 h-9 rounded-xl bg-gradient-to-br ${card.color} p-2 text-slate-950 flex items-center justify-center shadow-md`}>
-                <Icon className="w-5 h-5 text-slate-950 stroke-[2.5]" />
+            <div>
+              <div className="flex items-center justify-between mb-3 border-b border-slate-800 pb-2.5">
+                <span className="text-[10px] font-mono font-bold text-slate-400 uppercase tracking-widest">
+                  {card.code}
+                </span>
+                <span className="text-xs font-bold text-slate-300">
+                  {card.title}
+                </span>
+              </div>
+
+              <div className="py-1">
+                <h3 className="text-2xl sm:text-3xl font-serif font-black text-white tracking-tight">
+                  {card.value}
+                </h3>
               </div>
             </div>
 
-            <div className="space-y-1">
-              <h3 className="text-2xl font-black text-white tracking-tight">
-                {card.value}
-              </h3>
-              <div className="flex items-center gap-1.5 text-xs text-slate-400">
-                <TrendingUp className={`w-3.5 h-3.5 ${card.accent}`} />
-                <span className={card.accent}>{card.subtext}</span>
-              </div>
+            <div className="pt-3 border-t border-slate-800/80 mt-2 flex items-center justify-between text-[11px] font-mono">
+              <span className="text-slate-400">{card.subtext}</span>
+              <Icon className={`w-3.5 h-3.5 ${card.accent}`} aria-hidden="true" />
             </div>
           </div>
         );

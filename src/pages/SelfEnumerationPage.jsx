@@ -2,7 +2,7 @@ import React from 'react';
 import { useLanguage } from '../context/LanguageContext';
 import { useAuth } from '../context/AuthContext';
 import ChatContainer from '../components/ChatFlow/ChatContainer';
-import { ShieldCheck, Bot, Sparkles, UserCheck, HelpCircle } from 'lucide-react';
+import { ShieldCheck, Bot, Sparkles, UserCheck, Scale, FileText } from 'lucide-react';
 
 export default function SelfEnumerationPage() {
   const { t, language } = useLanguage();
@@ -10,43 +10,42 @@ export default function SelfEnumerationPage() {
 
   return (
     <div className="w-full space-y-6 pb-8">
-      {/* Top Banner */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-4 sm:p-6 rounded-2xl bg-gradient-to-r from-slate-900 via-slate-900 to-slate-950 border border-slate-800 shadow-xl">
-        <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400">
-            <Bot className="w-6 h-6" />
+      {/* Formal Interview Header Banner */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-5 sm:p-6 bg-[#0c1829] border border-slate-700 rounded-sm shadow-xl">
+        <div className="flex items-center gap-3.5">
+          <div className="w-12 h-12 bg-[#070e18] border border-amber-500/40 rounded-sm flex items-center justify-center text-amber-400 font-serif font-black text-xl">
+            🏛️
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-xl font-bold text-white">
+              <h1 className="font-serif text-xl sm:text-2xl font-bold text-white tracking-tight">
                 {t('chatTitle')}
               </h1>
-              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 flex items-center gap-1">
-                <Sparkles className="w-3 h-3" />
-                Gemini 2.0 AI
+              <span className="font-mono text-[10px] font-bold px-2 py-0.5 rounded-sm bg-amber-500/10 text-amber-400 border border-amber-500/30">
+                OFFICIAL DIGITAL INTERVIEW
               </span>
             </div>
-            <p className="text-xs text-slate-400 mt-0.5">
+            <p className="text-xs text-slate-300 font-sans mt-0.5">
               {t('chatSubtitle')}
             </p>
           </div>
         </div>
 
-        {/* Citizen Status Pill */}
-        <div className="flex items-center gap-2 p-2 px-3 rounded-xl bg-slate-950/80 border border-slate-800 text-xs">
-          <UserCheck className="w-4 h-4 text-emerald-400" />
+        {/* Citizen Official Verification Stamp */}
+        <div className="flex items-center gap-3 p-2.5 px-4 bg-[#070e18] border border-slate-800 rounded-sm font-mono text-xs self-start sm:self-center">
+          <UserCheck className="w-4 h-4 text-emerald-400" aria-hidden="true" />
           <div className="text-left">
-            <span className="text-[10px] text-slate-400 block font-medium leading-none">
-              {language === 'hi' ? 'सत्यापित नागरिक' : 'Logged Citizen'}
+            <span className="text-[10px] text-slate-400 block uppercase tracking-wider">
+              {language === 'hi' ? 'नागरिक रिकॉर्ड' : 'CITIZEN RECORD'}
             </span>
-            <span className="text-xs font-bold text-white truncate max-w-[130px] block">
+            <span className="text-xs font-bold text-white truncate max-w-[140px] block">
               {currentUser?.displayName || "Aarav Sharma"}
             </span>
           </div>
         </div>
       </div>
 
-      {/* Main Chat Flow */}
+      {/* Main Guided Interview Flow */}
       <ChatContainer />
     </div>
   );

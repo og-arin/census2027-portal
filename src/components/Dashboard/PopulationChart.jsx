@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useLanguage } from '../../context/LanguageContext';
 import { populationByStateData } from '../../data/dummyDashboardData';
 import { 
@@ -11,21 +11,23 @@ import {
   CartesianGrid, 
   Cell 
 } from 'recharts';
-import { BarChart3 } from 'lucide-react';
+import { BarChart3, FileSpreadsheet } from 'lucide-react';
 
 export default function PopulationChart() {
   const { t, language } = useLanguage();
 
+  const data = useMemo(() => populationByStateData, []);
+
   const CustomTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
       return (
-        <div className="bg-slate-900 border border-slate-700 p-3 rounded-xl shadow-xl text-xs">
-          <p className="font-bold text-white mb-1">{label}</p>
+        <div className="bg-[#070e18] border border-slate-700 p-3 rounded-sm shadow-2xl text-xs font-mono space-y-1">
+          <p className="font-bold text-white font-serif">{label}</p>
           <p className="text-amber-400 font-semibold">
-            Population: {payload[0].value} Million
+            POPULATION: {payload[0].value}M PERSONS
           </p>
-          <p className="text-slate-400 text-[11px] mt-0.5">
-            Households: {payload[0].payload.households} Million
+          <p className="text-slate-400 text-[10px]">
+            HOUSEHOLDS: {payload[0].payload.households}M UNITS
           </p>
         </div>
       );
@@ -34,38 +36,42 @@ export default function PopulationChart() {
   };
 
   return (
-    <div className="w-full bg-slate-900/80 border border-slate-800 rounded-2xl p-5 md:p-6 backdrop-blur-xl shadow-xl">
-      <div className="flex items-center justify-between mb-6">
+    <div className="w-full bg-[#0c1829] border border-slate-700 rounded-sm p-5 sm:p-6 shadow-xl font-sans">
+      {/* Formal Panel Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-5 pb-3 border-b border-slate-800">
         <div>
-          <h3 className="font-bold text-white text-base flex items-center gap-2">
-            <BarChart3 className="w-4 h-4 text-amber-400" />
-            <span>{t('chartPopState')}</span>
+          <div className="text-[10px] font-mono font-bold text-amber-500 uppercase tracking-widest">
+            FIGURE 1.0 • DEMOGRAPHIC PROJECTION
+          </div>
+          <h3 className="font-serif font-bold text-white text-base sm:text-lg">
+            {t('chartPopState')}
           </h3>
-          <p className="text-xs text-slate-400 mt-0.5">
-            {language === 'hi' ? '2026-2027 के लिए अनुमानित जनसांख्यिकी आंकड़े' : 'Projected 2026-2027 population across top demographic zones'}
+          <p className="text-xs text-slate-400 font-sans mt-0.5">
+            {language === 'hi' ? 'शीर्ष १० जनसांख्यिकीय राज्यों में अनुमानित जनसंख्या' : 'Projected 2026-2027 population across top demographic zones'}
           </p>
         </div>
-        <span className="text-[11px] px-2.5 py-1 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/30 font-semibold">
-          Top 10 States
+        <span className="badge-formal bg-[#070e18] text-slate-300 border-slate-700 self-start sm:self-center">
+          TOP 10 STATES
         </span>
       </div>
 
+      {/* Chart Canvas */}
       <div className="w-full h-72">
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={populationByStateData} margin={{ top: 10, right: 10, left: -20, bottom: 20 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" vertical={false} />
+          <BarChart data={data} margin={{ top: 10, right: 10, left: -20, bottom: 20 }}>
+            <CartesianGrid strokeDasharray="2 2" stroke="#1e293b" vertical={false} />
             <XAxis 
               dataKey="state" 
-              tick={{ fill: '#94a3b8', fontSize: 10 }} 
+              tick={{ fill: '#94a3b8', fontSize: 10, fontFamily: 'monospace' }} 
               interval={0}
               angle={-25}
               textAnchor="end"
             />
-            <YAxis tick={{ fill: '#94a3b8', fontSize: 11 }} />
+            <YAxis tick={{ fill: '#94a3b8', fontSize: 11, fontFamily: 'monospace' }} />
             <Tooltip content={<CustomTooltip />} />
-            <Bar dataKey="population" radius={[6, 6, 0, 0]}>
-              {populationByStateData.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={entry.color || '#ff9933'} />
+            <Bar dataKey="population" radius={[0, 0, 0, 0]}>
+              {data.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={entry.color || '#d97706'} />
               ))}
             </Bar>
           </BarChart>

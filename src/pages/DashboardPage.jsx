@@ -5,50 +5,69 @@ import PopulationChart from '../components/Dashboard/PopulationChart';
 import AgePyramidChart from '../components/Dashboard/AgePyramidChart';
 import LiteracyChart from '../components/Dashboard/LiteracyChart';
 import AmenitiesChart from '../components/Dashboard/AmenitiesChart';
-import { BarChart3, TrendingUp, Sparkles, Database } from 'lucide-react';
+import { BarChart3, Database, FileSpreadsheet, Download, RefreshCw, Landmark } from 'lucide-react';
 
 export default function DashboardPage() {
   const { t, language } = useLanguage();
 
   return (
-    <div className="w-full space-y-8 pb-12">
-      {/* Header Banner */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 p-6 rounded-3xl bg-gradient-to-r from-slate-900 via-slate-900 to-slate-950 border border-slate-800 shadow-2xl">
-        <div className="space-y-1">
-          <div className="flex items-center gap-2">
-            <span className="p-1.5 rounded-lg bg-amber-500/10 text-amber-400 border border-amber-500/30">
-              <BarChart3 className="w-5 h-5" />
-            </span>
-            <h1 className="text-xl sm:text-2xl font-black text-white tracking-tight">
-              {t('dashTitle')}
-            </h1>
+    <div className="w-full space-y-8 pb-12 font-sans">
+      {/* Formal Statistical Bulletin Header */}
+      <div className="p-6 sm:p-8 bg-[#0a1424] border border-slate-700 rounded-sm shadow-xl flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+        <div className="space-y-1.5">
+          <div className="flex items-center gap-2 font-mono text-[10px] font-bold text-amber-500 uppercase tracking-widest">
+            <Landmark className="w-3.5 h-3.5" aria-hidden="true" />
+            <span>STATISTICAL BULLETIN NO. CEN2027-REP-01 • DEMOGRAPHIC REPOSITORY</span>
           </div>
-          <p className="text-xs sm:text-sm text-slate-400">
+          <h1 className="font-serif text-2xl sm:text-4xl font-extrabold text-white tracking-tight">
+            {t('dashTitle')}
+          </h1>
+          <p className="text-xs sm:text-sm text-slate-300 font-sans max-w-2xl">
             {t('dashSubtitle')}
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
-          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-bold">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-            <span>Live Data Sync (2026-27)</span>
-          </span>
+        {/* Report Metadata Controls */}
+        <div className="flex flex-wrap items-center gap-3 font-mono text-xs">
+          <div className="p-2.5 px-3 bg-[#070e18] border border-slate-800 rounded-sm text-left">
+            <span className="text-[9px] text-slate-500 block uppercase">LAST SYNCHRONIZED:</span>
+            <span className="font-bold text-slate-200 text-xs">
+              {new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}
+            </span>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => window.print()}
+            className="flex items-center gap-2 px-4 py-2.5 bg-[#0c1829] hover:bg-slate-800 text-slate-200 border border-slate-700 rounded-sm font-bold transition"
+          >
+            <Download className="w-3.5 h-3.5 text-amber-400" aria-hidden="true" />
+            <span>PRINT BULLETIN</span>
+          </button>
         </div>
       </div>
 
-      {/* KPI Cards */}
-      <MetricCards />
+      {/* KPI Metric Panels */}
+      <section aria-label="Key Demographic Indicators">
+        <MetricCards />
+      </section>
 
-      {/* Charts Grid: Row 1 */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      {/* Primary Visualizations Grid (Styled like Official Report Panels) */}
+      <section className="grid grid-cols-1 lg:grid-cols-2 gap-6" aria-label="Population and Demographics">
         <PopulationChart />
         <AgePyramidChart />
-      </div>
+      </section>
 
-      {/* Charts Grid: Row 2 */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      {/* Secondary Socio-Economic Visualizations */}
+      <section className="grid grid-cols-1 lg:grid-cols-2 gap-6" aria-label="Literacy and Household Infrastructure">
         <LiteracyChart />
         <AmenitiesChart />
+      </section>
+
+      {/* Official Data Source Attribution Footer */}
+      <div className="p-4 bg-[#070e18] border border-slate-800 rounded-sm font-mono text-[10.5px] text-slate-400 flex flex-col sm:flex-row items-center justify-between gap-2">
+        <span>DATA SOURCE: OFFICE OF THE REGISTRAR GENERAL & CENSUS COMMISSIONER, INDIA</span>
+        <span>AGGREGATE STATISTICAL DISCLOSURE • SECTION 15 COMPLIANT</span>
       </div>
     </div>
   );

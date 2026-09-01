@@ -1,4 +1,5 @@
-import { phase1Questions, phase2Questions, allQuestions } from '../data/formSchema';
+import { phase1Questions, phase2Questions } from '../data/formSchema';
+import { sanitizeForGemini } from '../utils/sanitize';
 
 export const CENSUS_MITRA_SYSTEM_PROMPT = `
 You are "Census Mitra" (जनगणना मित्र), the official, highly respectful, and helpful AI Enumeration Assistant for the Census of India 2027.
@@ -17,9 +18,11 @@ Rules of Interaction:
 `.trim();
 
 const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY || "";
+const CLOUD_FUNCTION_URL = import.meta.env.VITE_FIREBASE_FUNCTION_URL || "";
 
 /**
- * Call Google Gemini API (gemini-1.5-flash or gemini-2.0-flash)
+ * Call Gemini AI either through Firebase Cloud Function Proxy (Server-side)
+ * or Direct REST API with client sanitization & fallback.
  */
 export async function sendCensusMessageToGemini({
   messages,
@@ -28,17 +31,50 @@ export async function sendCensusMessageToGemini({
   language = 'en',
   formData = {}
 }) {
-  // If Gemini API key is configured, call official Gemini API
+  // Sanitize all incoming message texts to defend against prompt injection and XSS
+  const sanitizedMessages = messages.map(msg => ({
+    ...msg,
+    text: sanitizeForGemini(msg.text)
+  }));
+
+  // 1. Try Firebase Cloud Function Proxy first (Recommended Secure Architecture)
+  if (CLOUD_FUNCTION_URL) {
+    try {
+      const response = await fetch(CLOUD_FUNCTION_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          messages: sanitizedMessages,
+          currentQuestionIndex,
+          phase,
+          language,
+          formData
+        })
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        return {
+          text: data.text,
+          extracted: data.extracted,
+          source: 'cloud-function'
+        };
+      }
+    } catch (err) {
+      console.warn("Cloud function proxy unavailable, trying direct API:", err);
+    }
+  }
+
+  // 2. Direct Gemini REST API
   if (GEMINI_API_KEY && GEMINI_API_KEY !== "your-gemini-api-key") {
     try {
       const systemInstruction = `${CENSUS_MITRA_SYSTEM_PROMPT}\n\nCurrent Form State: ${JSON.stringify(formData)}\nActive Phase: ${phase}\nUser Preferred Language: ${language === 'hi' ? 'Hindi' : 'English'}`;
       
-      const contents = messages.map(msg => ({
+      const contents = sanitizedMessages.map(msg => ({
         role: msg.sender === 'user' ? 'user' : 'model',
         parts: [{ text: msg.text }]
       }));
 
-      // Direct Gemini REST API endpoint
       const response = await fetch(
         `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`,
         {
@@ -57,30 +93,28 @@ export async function sendCensusMessageToGemini({
         }
       );
 
-      if (!response.ok) {
-        throw new Error(`Gemini API HTTP Error: ${response.status}`);
-      }
+      if (response.ok) {
+        const result = await response.json();
+        const botText = result?.candidates?.[0]?.content?.parts?.[0]?.text;
 
-      const result = await response.json();
-      const botText = result?.candidates?.[0]?.content?.parts?.[0]?.text;
-
-      if (botText) {
-        const extractedData = parseExtractedJSON(botText);
-        const cleanText = botText.replace(/<!--EXTRACT:[\s\S]*?-->/g, '').trim();
-        return {
-          text: cleanText,
-          extracted: extractedData,
-          source: 'gemini-live'
-        };
+        if (botText) {
+          const extractedData = parseExtractedJSON(botText);
+          const cleanText = botText.replace(/<!--EXTRACT:[\s\S]*?-->/g, '').trim();
+          return {
+            text: cleanText,
+            extracted: extractedData,
+            source: 'gemini-live'
+          };
+        }
       }
     } catch (err) {
-      console.warn("Gemini API call failed, falling back to smart local Census Mitra engine:", err);
+      console.warn("Gemini API call warning, falling back to local Census Mitra engine:", err);
     }
   }
 
-  // Smart Offline/Demo Census Mitra Engine
+  // 3. Smart Local Census Mitra Engine (Robust fallback)
   return generateLocalCensusMitraResponse({
-    messages,
+    messages: sanitizedMessages,
     currentQuestionIndex,
     phase,
     language,
@@ -88,9 +122,6 @@ export async function sendCensusMessageToGemini({
   });
 }
 
-/**
- * Parses hidden extraction tag if provided by Gemini
- */
 function parseExtractedJSON(text) {
   const match = text.match(/<!--EXTRACT:([\s\S]*?)-->/);
   if (match && match[1]) {
@@ -103,9 +134,6 @@ function parseExtractedJSON(text) {
   return null;
 }
 
-/**
- * Intelligent Local Census Mitra Assistant for smooth offline/hackathon experience
- */
 export function generateLocalCensusMitraResponse({
   messages,
   currentQuestionIndex,
@@ -117,7 +145,6 @@ export function generateLocalCensusMitraResponse({
   const questionsList = phase === 'phase1' ? phase1Questions : phase2Questions;
   const currentQ = questionsList[currentQuestionIndex];
 
-  // Acknowledgment phrases
   const ackEn = ["Got it, recorded!", "Thank you for providing that detail.", "Perfect, noted securely.", "Understood."];
   const ackHi = ["धन्यवाद, यह विवरण दर्ज कर लिया गया है।", "बहुत अच्छा, यह जानकारी सुरक्षित रूप से सहेजी गई है।", "नोट कर लिया गया है।", "ठीक है, अगला विवरण दर्ज करते हैं।"];
   
@@ -125,7 +152,6 @@ export function generateLocalCensusMitraResponse({
     ? ackHi[Math.floor(Math.random() * ackHi.length)] 
     : ackEn[Math.floor(Math.random() * ackEn.length)];
 
-  // If user just answered the current question
   let nextIndex = currentQuestionIndex;
   let extracted = null;
 
@@ -145,7 +171,6 @@ export function generateLocalCensusMitraResponse({
     const questionText = language === 'hi' ? nextQ.question_hi : nextQ.question_en;
     replyText = `${randomAck}\n\n👉 **${questionText}**`;
   } else {
-    // Phase completed!
     if (phase === 'phase1') {
       replyText = language === 'hi'
         ? "🎉 **बधाई! चरण 1 (मकान सूचीकरण) के सभी प्रश्न पूरे हो गए हैं।**\n\nआपकी जानकारी सुरक्षित रूप से सहेज ली गई है। अब आप **चरण 2 (जनसंख्या गणना)** पर आगे बढ़ सकते हैं।"

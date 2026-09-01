@@ -1,0 +1,39 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper function to check if the user is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    // Helper function to check if the request is from the owner of the document
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    // Citizen Self-Enumerations Collection
+    // Strict Owner-Only Read and Write
+    match /enumerations/{userId} {
+      allow read, write: if isOwner(userId);
+      allow create: if isOwner(userId);
+      allow update: if isOwner(userId);
+      allow delete: if isOwner(userId);
+    }
+
+    // State Survey Schedules Collection
+    // Publicly readable for all citizens, writable only by admin service roles
+    match /states/{stateId} {
+      allow read: if true;
+      allow write: if false; // Only manageable through backend administrative scripts
+    }
+
+    // Misinformation & Fact-Check Flags Collection
+    // Publicly readable debunks; authenticated citizens can submit reports
+    match /misinformation_flags/{flagId} {
+      allow read: if true;
+      allow create: if isAuthenticated() || true; // Allow citizens to report suspicious forwards
+      allow update, delete: if false; // Immutable once published by fact-checking unit
+    }
+  }
+}

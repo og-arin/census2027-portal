@@ -11,15 +11,13 @@ import PreviewDrawer from './PreviewDrawer';
 import CompletionSlip from './CompletionSlip';
 import { 
   Send, 
-  Sparkles, 
   RotateCcw, 
   Eye, 
   Award, 
   Mic, 
-  MicOff, 
-  CheckCircle2, 
-  AlertCircle,
-  ArrowRight
+  ArrowRight,
+  FileCheck2,
+  FileText
 } from 'lucide-react';
 
 export default function ChatContainer() {
@@ -51,7 +49,6 @@ export default function ChatContainer() {
   const activeQuestions = currentPhase === 'phase1' ? phase1Questions : phase2Questions;
   const currentQ = activeQuestions[currentQuestionIndex];
 
-  // Auto-scroll to bottom on message updates
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
@@ -60,7 +57,6 @@ export default function ChatContainer() {
     scrollToBottom();
   }, [messages, isTyping]);
 
-  // Initial welcome greeting & first question
   useEffect(() => {
     initChatForPhase(currentPhase);
   }, [currentPhase, language]);
@@ -71,10 +67,10 @@ export default function ChatContainer() {
     const firstQ = questions[0];
     const initialGreeting = language === 'hi'
       ? (isPhase1 
-          ? `नमस्ते ${currentUser?.displayName || 'नागरिक'} जी! 🙏\n\nमैं **जनगणना मित्र** हूँ, आपका डिजिटल जनगणना 2027 सहायक।\n\nआइए **चरण 1 (मकान सूचीकरण एवं आवास गणना)** प्रारंभ करते हैं। आपकी सभी प्रविष्टियां पूर्णतः गोपनीय और सुरक्षित रहेंगी।\n\n👉 **${firstQ.question_hi}**`
-          : `नमस्ते ${currentUser?.displayName || 'Citizen'}! 🙏\n\nI am **Census Mitra**, your official AI Assistant for Census 2027.\n\nLet's begin **Phase 1: House Listing & Housing Census**. Your answers are protected under the Census Act and strictly confidential.\n\n👉 **${firstQ.question_en}**`)
+          ? `नमस्ते ${currentUser?.displayName || 'नागरिक'} जी! 🙏\n\nमैं **जनगणना मित्र** हूँ, भारत सरकार का आधिकारिक डिजिटल जनगणना प्रगणक सहायक।\n\nआइए **चरण 1 (मकान सूचीकरण एवं आवास गणना)** प्रारंभ करते हैं। आपकी सभी प्रविष्टियां जनगणना अधिनियम, १९४८ की धारा १५ के तहत पूर्णतः गोपनीय हैं।\n\n👉 **${firstQ.question_hi}**`
+          : `नमस्ते! आइए अब **चरण 2 (जनसंख्या गणना)** प्रारंभ करते हैं।\n\nहम परिवार के सभी सदस्यों के जनसांख्यिकीय व शैक्षणिक विवरण दर्ज करेंगे।\n\n👉 **${firstQ.question_hi}**`)
       : (isPhase1
-          ? `Namaste ${currentUser?.displayName || 'Citizen'}! 🙏\n\nI am **Census Mitra**, your official AI Assistant for Census 2027.\n\nLet's begin **Phase 1: House Listing & Housing Census**. Your responses are protected under the Census Act.\n\n👉 **${firstQ.question_en}**`
+          ? `Namaste ${currentUser?.displayName || 'Citizen'}! 🙏\n\nI am **Census Mitra**, the official AI Enumeration Assistant for Census of India 2027.\n\nLet's begin **Phase 1: House Listing & Housing Census**. All entries are confidential and protected under Section 15 of the Census Act, 1948.\n\n👉 **${firstQ.question_en}**`
           : `Namaste! Let's proceed to **Phase 2: Population Enumeration**.\n\nWe will now record the demographic and socio-economic details of your household members.\n\n👉 **${firstQ.question_en}**`);
 
     setMessages([
@@ -88,7 +84,6 @@ export default function ChatContainer() {
     setCurrentQuestionIndex(0);
   };
 
-  // Handle sending a message
   const handleSendMessage = async (customText = null) => {
     const textToSend = (customText || inputText).trim();
     if (!textToSend || isTyping) return;
@@ -115,14 +110,12 @@ export default function ChatContainer() {
         formData: currentPhase === 'phase1' ? phase1Data : phase2Data
       });
 
-      // Save extracted answer to context & Firestore
       if (response.extracted && response.extracted.field) {
         await updateAnswer(currentPhase, response.extracted.field, response.extracted.value);
       } else if (currentQ) {
         await updateAnswer(currentPhase, currentQ.field, textToSend);
       }
 
-      // Update question index
       if (response.nextIndex !== undefined) {
         setCurrentQuestionIndex(response.nextIndex);
       } else {
@@ -138,7 +131,6 @@ export default function ChatContainer() {
 
       setMessages(prev => [...prev, botMessage]);
 
-      // If phase completed, trigger completion
       if (response.isCompleted || currentQuestionIndex + 1 >= activeQuestions.length) {
         if (currentPhase === 'phase1') {
           await completePhase1();
@@ -154,7 +146,6 @@ export default function ChatContainer() {
     }
   };
 
-  // Voice recognition (Speech to text) for accessibility
   const toggleSpeechRecognition = () => {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRecognition) {
@@ -204,16 +195,19 @@ export default function ChatContainer() {
   const isPhase2Done = getPhase2Progress() === 100;
 
   return (
-    <div className="w-full max-w-4xl mx-auto flex flex-col h-[82vh] bg-slate-950/70 border border-slate-800 rounded-3xl overflow-hidden shadow-2xl backdrop-blur-xl relative">
-      {/* Top Progress Tracker */}
+    <section 
+      className="w-full max-w-4xl mx-auto flex flex-col h-[82vh] bg-[#091220] border border-slate-700 rounded-sm shadow-2xl relative overflow-hidden font-sans"
+      aria-label="Census Mitra Guided Self-Enumeration Interview"
+    >
+      {/* Top Gazette Progress Tracker */}
       <ProgressTracker />
 
       {/* Control sub-bar */}
-      <div className="bg-slate-900/60 px-4 py-2 border-b border-slate-800/80 flex items-center justify-between text-xs">
+      <div className="bg-[#0c1829] px-4 py-2.5 border-b border-slate-800 flex items-center justify-between text-xs font-mono">
         <div className="flex items-center gap-2">
-          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-          <span className="font-semibold text-slate-300">
-            {language === 'hi' ? 'सक्रिय सत्र:' : 'Active Phase:'}
+          <span className="w-2 h-2 rounded-none bg-emerald-500" aria-hidden="true" />
+          <span className="text-slate-400">
+            {language === 'hi' ? 'सक्रिय अनुसूची:' : 'SCHEDULE:'}
           </span>
           <span className="font-bold text-amber-400">
             {currentPhase === 'phase1' ? t('chatPhase1Tab') : t('chatPhase2Tab')}
@@ -223,66 +217,83 @@ export default function ChatContainer() {
         <div className="flex items-center gap-2">
           {/* Review Data drawer button */}
           <button
+            type="button"
             onClick={() => setIsPreviewOpen(true)}
-            className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-800/80 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-700 transition"
+            aria-label="Inspect recorded survey schedule entries"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-sm bg-[#070e18] hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-700 transition"
           >
-            <Eye className="w-3.5 h-3.5 text-sky-400" />
-            <span>{t('chatViewSummary')}</span>
+            <Eye className="w-3.5 h-3.5 text-amber-400" aria-hidden="true" />
+            <span className="font-bold">{t('chatViewSummary')}</span>
           </button>
 
           {/* Verification slip trigger if completed */}
           {(isPhase2Done || status === 'completed') && (
             <button
+              type="button"
               onClick={() => setIsSlipOpen(true)}
-              className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold transition shadow-md shadow-emerald-500/20"
+              aria-label="Download verified census slip"
+              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-sm bg-emerald-700 hover:bg-emerald-600 text-white font-bold transition shadow-sm"
             >
-              <Award className="w-3.5 h-3.5" />
+              <Award className="w-3.5 h-3.5" aria-hidden="true" />
               <span>{t('chatDownloadSlip')}</span>
             </button>
           )}
 
           {/* Restart */}
           <button
+            type="button"
             onClick={handleRestart}
-            className="p-1 text-slate-400 hover:text-rose-400 rounded-lg hover:bg-slate-800 transition"
+            aria-label="Reset current survey schedule"
+            className="p-1.5 text-slate-400 hover:text-rose-400 rounded-sm hover:bg-slate-800 transition"
             title={t('chatRestart')}
           >
-            <RotateCcw className="w-3.5 h-3.5" />
+            <RotateCcw className="w-3.5 h-3.5" aria-hidden="true" />
           </button>
         </div>
       </div>
 
       {/* Messages Scroll Area */}
-      <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-2">
+      <div 
+        className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-2 bg-[#08111e]"
+        role="log"
+        aria-live="polite"
+        aria-label="Official Enumeration Transcript"
+      >
         {messages.map((msg) => (
           <MessageBubble key={msg.id} message={msg} />
         ))}
 
-        {/* Typing indicator */}
+        {/* Formal Typing / Verification indicator */}
         {isTyping && (
-          <div className="flex items-center gap-2 text-slate-400 text-xs p-3 rounded-xl bg-slate-900/60 border border-slate-800/60 w-max animate-pulse">
-            <Sparkles className="w-4 h-4 text-amber-400 animate-spin" />
-            <span>Census Mitra is typing response & verifying data...</span>
+          <div 
+            className="flex items-center gap-2 text-slate-400 text-xs p-3 rounded-sm bg-[#0c1829] border border-slate-700 w-max shadow-sm font-mono"
+            role="status"
+            aria-label="Verifying and generating official query"
+          >
+            <div className="w-2 h-2 rounded-none bg-amber-400 animate-ping" aria-hidden="true" />
+            <span className="text-slate-300">VALIDATING RECORD WITH STATISTICAL REGISTRY...</span>
           </div>
         )}
 
         {/* Phase transition helper prompt */}
         {currentPhase === 'phase1' && isPhase1Done && (
-          <div className="p-4 my-4 rounded-2xl bg-gradient-to-r from-emerald-500/10 via-amber-500/10 to-transparent border border-emerald-500/30 flex items-center justify-between gap-4">
+          <div className="p-5 my-4 bg-[#0c1829] border border-emerald-600 rounded-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-xl">
             <div>
-              <p className="font-bold text-white text-sm">
-                {language === 'hi' ? 'चरण 1 पूर्ण हो गया है!' : 'Phase 1 Complete!'}
+              <p className="font-serif font-bold text-white text-sm sm:text-base">
+                {language === 'hi' ? 'चरण १ (मकान सूचीकरण) पूर्ण हुआ' : 'SCHEDULE A (HOUSING CENSUS) RECORDED'}
               </p>
-              <p className="text-xs text-slate-300 mt-0.5">
-                {language === 'hi' ? 'अब परिवार के सदस्यों का विवरण दर्ज करने के लिए चरण 2 शुरू करें।' : 'Ready to record individual demographic data in Phase 2.'}
+              <p className="text-xs text-slate-300 mt-1 font-sans">
+                {language === 'hi' ? 'अब परिवार के सदस्यों का जनसांख्यिकीय विवरण (चरण २) दर्ज करने के लिए आगे बढ़ें।' : 'Proceed to record individual demographic & educational data in Schedule B.'}
               </p>
             </div>
             <button
+              type="button"
               onClick={handleFinishPhase1}
-              className="px-4 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold text-xs flex items-center gap-1.5 shadow-lg shadow-amber-500/20 whitespace-nowrap transition"
+              aria-label="Proceed to Schedule B Population Enumeration"
+              className="px-5 py-2.5 rounded-sm bg-amber-600 hover:bg-amber-500 text-white font-bold text-xs uppercase tracking-wider flex items-center gap-2 transition"
             >
               <span>{t('chatFillPhase2Prompt')}</span>
-              <ArrowRight className="w-4 h-4" />
+              <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />
             </button>
           </div>
         )}
@@ -291,7 +302,7 @@ export default function ChatContainer() {
       </div>
 
       {/* Bottom Interactive Area */}
-      <div className="p-3 sm:p-4 bg-slate-950/90 border-t border-slate-800">
+      <div className="p-3 sm:p-5 bg-[#0a1424] border-t border-slate-800">
         {/* Smart Quick Reply Chips */}
         {currentQ && currentQ.quickReplies && (
           <QuickResponses
@@ -301,26 +312,27 @@ export default function ChatContainer() {
           />
         )}
 
-        {/* Input Bar */}
+        {/* Formal Input Bar */}
         <form
           onSubmit={(e) => {
             e.preventDefault();
             handleSendMessage();
           }}
-          className="flex items-center gap-2 mt-2"
+          className="flex items-center gap-2.5 mt-2"
         >
           {/* Voice Input button */}
           <button
             type="button"
             onClick={toggleSpeechRecognition}
-            className={`p-3 rounded-2xl border transition-all ${
+            aria-label={isListening ? "Voice recording active" : "Dictate response"}
+            className={`p-3 rounded-sm border font-mono text-xs transition-all ${
               isListening
-                ? 'bg-rose-500 text-white border-rose-400 animate-pulse'
-                : 'bg-slate-900 border-slate-800 text-slate-400 hover:text-amber-400 hover:border-slate-700'
+                ? 'bg-rose-700 text-white border-rose-500 shadow-md animate-pulse'
+                : 'bg-[#070e18] border-slate-700 text-slate-400 hover:text-amber-400 hover:border-slate-600'
             }`}
             title={isListening ? t('chatVoiceListen') : "Voice input"}
           >
-            {isListening ? <Mic className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
+            <Mic className="w-4 h-4" aria-hidden="true" />
           </button>
 
           {/* Text Input */}
@@ -329,13 +341,14 @@ export default function ChatContainer() {
               type="text"
               value={inputText}
               onChange={(e) => setInputText(e.target.value)}
+              aria-label="Census Mitra conversation input"
               placeholder={
                 currentQ 
                   ? (language === 'hi' ? currentQ.placeholder_hi || t('chatInputPlaceholder') : currentQ.placeholder_en || t('chatInputPlaceholder')) 
                   : t('chatInputPlaceholder')
               }
               disabled={isTyping}
-              className="w-full bg-slate-900 border border-slate-800 rounded-2xl px-4 py-3 text-xs sm:text-sm text-white placeholder-slate-500 focus:outline-none focus:border-amber-500/80 focus:ring-1 focus:ring-amber-500/50 transition"
+              className="w-full bg-[#070e18] border border-slate-700 rounded-sm px-4 py-3 text-xs sm:text-sm text-white placeholder-slate-500 focus:outline-none focus:border-amber-500 transition font-sans"
             />
           </div>
 
@@ -343,9 +356,11 @@ export default function ChatContainer() {
           <button
             type="submit"
             disabled={!inputText.trim() || isTyping}
-            className="p-3 rounded-2xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold disabled:opacity-40 disabled:pointer-events-none shadow-lg shadow-amber-500/20 transition-all active:scale-95 flex items-center justify-center"
+            aria-label="Submit recorded answer"
+            className="px-5 py-3 rounded-sm bg-amber-600 hover:bg-amber-500 text-white font-mono font-bold text-xs uppercase tracking-wider disabled:opacity-40 disabled:pointer-events-none shadow-md transition-all flex items-center justify-center gap-2"
           >
-            <Send className="w-5 h-5" />
+            <span>SUBMIT</span>
+            <Send className="w-3.5 h-3.5" aria-hidden="true" />
           </button>
         </form>
       </div>
@@ -362,6 +377,6 @@ export default function ChatContainer() {
         isOpen={isSlipOpen}
         onClose={() => setIsSlipOpen(false)}
       />
-    </div>
+    </section>
   );
 }
